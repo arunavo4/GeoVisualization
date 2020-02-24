@@ -20,14 +20,74 @@
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
+        
         <a class="navbar-brand" href="./">GeoVis- A Visualization and Analysis Tool for GeoFauna</a>
       </div>
     </div>
   </div>
 
+  <!-- container-fluid -->
   <div class="container-fluid">
 
-      <div class="row">
+    	<!-- Modal -->
+      <div class="modal right fade" id="sidebar-right" tabindex="-1" role="dialog" aria-labelledby="sidebar-title">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="sidebar-title">Right Sidebar</h4>
+            </div>
+
+            <div class="modal-body" id="sidebar-body">
+              
+              <!--Image Carousel-->
+              <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                  <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                  <li data-target="#myCarousel" data-slide-to="1"></li>
+                  <li data-target="#myCarousel" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                  <div class="item active">
+                    <img class="d-block w-100" src="static/css/images/placeholder_rectangle.png" alt="First slide" id="ImageAnimal">
+                      <div class="carousel-caption d-none d-md-block">
+                          <p>Image Animal</p>
+                      </div>
+                  </div>
+                  <div class="item">
+                    <img class="d-block w-100" src="static/css/images/placeholder_rectangle.png" alt="Second slide" id="ImageHabitat">
+                      <div class="carousel-caption d-none d-md-block">
+                          <p>Image Habitat</p>
+                      </div>
+                  </div>
+                  <div class="item">
+                    <img class="d-block w-100" src="static/css/images/placeholder_rectangle.png" alt="Third slide" id="ImageHost">
+                      <div class="carousel-caption d-none d-md-block">
+                          <p>Image Host</p>
+                      </div>
+                  </div>
+                </div>
+                <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>
+              <!--Image Carousel-->
+
+
+
+            </div>
+
+          </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+      </div><!-- modal -->
+
+    <div class="row">
 
       <!-- First View Page -->
       <!-- States-Map-dateSlider-Counter -->
@@ -211,6 +271,7 @@
       </div>
 
     </div>
+  <!-- container-fluid -->
 
   <hr>
 <!--  <p class="small text-muted">Built with &#9829; by <a href="https://keen.io">Keen IO</a></p>-->

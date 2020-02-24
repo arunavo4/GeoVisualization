@@ -149,7 +149,7 @@ function makeGraphs(error, recordsJson) {
                 exclusive: true
             }).on('click', function (e) {
                 // showMarkerData(e);
-                // sidebar.toggle();
+                $("#sidebar-right").modal();
                 this.bounce(3);
             }).addTo(markers);
 

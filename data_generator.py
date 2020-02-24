@@ -6,7 +6,7 @@ from randomtimestamp import randomtimestamp
 
 
 data_path = './static/data'
-n_samples = 10000
+n_samples = 5000
 
 name = ["Butterfly", "Buzzard", "Camel",
         "Canid", "Cape buffalo", "Capybara",
@@ -73,7 +73,7 @@ def main():
         date_time = random_date_time()
         data['Date'] = date_time[0]
         data['Time'] = date_time[1]
-        state, latlag = get_random_location(state_json)
+        state, latlag = get_random_location(district_json)
         data['Latitude'] = latlag.y
         data['Longitude'] = latlag.x
         data['State'] = state
