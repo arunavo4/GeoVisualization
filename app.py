@@ -3,7 +3,7 @@
 import pandas as pd
 from shapely.geometry import Point, shape
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask import render_template
 import json
 
@@ -32,6 +32,10 @@ with open(data_path + '/geojson/taluk/india_taluk.geojson') as data_file:
 
 app = Flask(__name__)
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route("/")
 def index():
