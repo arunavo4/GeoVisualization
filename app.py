@@ -2,11 +2,10 @@
 
 import pandas as pd
 from shapely.geometry import Point, shape
-
+import os
 from flask import Flask, send_from_directory
 from flask import render_template
 import json
-
 
 data_path = './static/data'
 
@@ -32,10 +31,12 @@ with open(data_path + '/geojson/taluk/india_taluk.geojson') as data_file:
 
 app = Flask(__name__)
 
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 @app.route("/")
 def index():
@@ -45,8 +46,12 @@ def index():
 @app.route("/data")
 def get_data():
     df = pd.read_csv(data_path + '/Documents/Records.csv')
+    prefix = f'{data_path}/Pictures/'
 
-
+    # Add image dir to pictures
+    df.loc[df['ImageAnimal'].notna(), 'ImageAnimal'] = prefix + df.loc[df['ImageAnimal'].notna(), 'ImageAnimal']
+    df.loc[df['ImageHabitat'].notna(), 'ImageHabitat'] = prefix + df.loc[df['ImageHabitat'].notna(), 'ImageHabitat']
+    df.loc[df['ImageHost'].notna(), 'ImageHost'] = prefix + df.loc[df['ImageHost'].notna(), 'ImageHost']
 
     return df.to_json(orient='records')
 

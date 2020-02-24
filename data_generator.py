@@ -8,20 +8,14 @@ from randomtimestamp import randomtimestamp
 data_path = './static/data'
 n_samples = 5000
 
-name = ["Butterfly", "Buzzard", "Camel",
-        "Canid", "Cape buffalo", "Capybara",
-        "Cardinal", "Caribou", "Carp", "Cat",
-        "Chinchilla", "Chipmunk", "Clam", "Clownfish",
-        "Cobra", "Cockroach", "Cod", "Crawdad", "Crayfish"]
-
-picture = ["https://www.weforanimals.com/thumbnails/free-thumbnails-animals_files/scan0014_small.jpg",
-           "https://www.weforanimals.com/thumbnails/free-thumbnails-animals_files/scan0017_small.jpg",
-           "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS306wTwjxvj89NJ4r4fYCPE12-IRhIePHhrEZQkhYre9hf49xJ",
-           "http://home.mweb.co.za/pa/pak04857/uniweb/animalimages/hornbillthumb.jpg",
-           "https://www.weforanimals.com/thumbnails/free-thumbnails-birds_files/Cap0169_small.jpg",
-           "http://home.mweb.co.za/pa/pak04857/uniweb/animalimages/leopardthumb.jpg",
-           "http://home.mweb.co.za/pa/pak04857/uniweb/animalimages/baboon.jpg",
-           "http://home.mweb.co.za/pa/pak04857/uniweb/animalimages/giraffe.jpg"
+picture = ["scan0014_small.jpg",
+           "scan0017_small.jpg",
+           "images.jpg",
+           "hornbillthumb.jpg",
+           "Cap0169_small.jpg",
+           "leopardthumb.jpg",
+           "baboon.jpg",
+           "giraffe.jpg"
            ]
 
 """ Random Location Generator within a polygon """
@@ -92,6 +86,10 @@ def main():
         data['Vertebrate'] = rand.choice(['Yes', 'No'])
         data['Temperature'] = rand.randint(5, 50)
         data['Humidity'] = rand.randint(45, 75)
+
+        data['ImageAnimal'] = rand.choice(picture)
+        data['ImageHabitat'] = None
+        data['ImageHost'] = None
 
         list_of_records.append(data)
 

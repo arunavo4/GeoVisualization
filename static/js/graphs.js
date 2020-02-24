@@ -136,10 +136,12 @@ function makeGraphs(error, recordsJson) {
 
 		_.each(allDim.top(Infinity), function (d) {
 			var title = d["UniqueSurveyID"];
+			var thumbnail = d["ImageAnimal"] || d["ImageHabitat"] || d["ImageHost"];
+			console.log(thumbnail);
 			var selfIcon = new L.divIcon({
 				className: 'my-div-icon',
 				iconSize: [50, 50],
-				html: '<img  class="circle_img" src="' + 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT2zchVyKKwkMIhIGJ_8Mv2XGEoqq3z4trJU73rc7F6X_bulKqa' + '" style="border: 3px solid ' + '#FFFFFF' + '" />'
+				html: '<img  class="circle_img" src="' + thumbnail + '" style="border: 3px solid ' + '#FFFFFF' + '" />'
 			});
 			var marker = L.marker(new L.LatLng(parseFloat(d["Latitude"]).toPrecision(4), parseFloat(d["Longitude"]).toPrecision(4)), {
                 title: title,
@@ -148,13 +150,13 @@ function makeGraphs(error, recordsJson) {
                 bounceHeight: 20,
                 exclusive: true
             }).on('click', function (e) {
-                // showMarkerData(e);
+                showMarkerData(e);
                 $("#sidebar-right").modal();
                 this.bounce(3);
             }).addTo(markers);
 
             // Add data on marker itself
-            // marker.data = map_data[i];
+            marker.data = d;
 
             var content = title + "</br>" + "Latitude:" + d["Latitude"] + "</br>" + "Longitude:" + d["Longitude"];
             marker.bindPopup(content, {
@@ -164,12 +166,18 @@ function makeGraphs(error, recordsJson) {
 			marker.on('mouseover', function (e) {
                 // Change content on the fly
                 marker.openPopup();
-            })
+			});
+			
+			function showMarkerData(e){
+                var data =  e.target.data;
+                document.getElementById("thumbnail").src = thumbnail;
 
-            // map.on('click', function () {
-            //     marker.closePopup();
-            //     sidebar.hide();
-            // })
+                //compile the string
+                var record = "";
+                for (var i in data){
+                    console.log(i, data[i]);
+                }
+            }
 
             markers.addLayer(marker);
             markerList.push(marker);
