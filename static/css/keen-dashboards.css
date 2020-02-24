@@ -8,8 +8,8 @@ body.application {
   padding: 60px 20px 0;
 }
 body.application > .container-fluid {
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 body.application div[class^="col-"] {
   padding-left: 5px;

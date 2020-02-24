@@ -2,8 +2,7 @@ queue()
     .defer(d3.json, "/data")
     .await(makeGraphs);
 
-function makeGraphs(error, recordsJson) {
-	
+function makeGraphs(error, recordsJson) {	
 	//Clean data
 	var records = recordsJson;
 	var dateFormat = d3.time.format("%d-%m-%Y");   //%Y-%m-%d %H:%M:%S
@@ -21,6 +20,7 @@ function makeGraphs(error, recordsJson) {
 	var dateDim = ndx.dimension(function(d) { return d["Date"]; });
 	var entomofaunaDim = ndx.dimension(function(d) { return d["Entomofauna"]; });
 	var otherInvertebrateDim = ndx.dimension(function(d) { return d["OtherInvertebrate"]; });
+	var vertebrateDim = ndx.dimension(function(d) { return d["Vertebrate"]; });
 	var habitatDim = ndx.dimension(function(d) { return d["Habitat"]; });
 	var locationdDim = ndx.dimension(function(d) { return d["State"]; });
 	var allDim = ndx.dimension(function(d) {return d;});
@@ -30,6 +30,7 @@ function makeGraphs(error, recordsJson) {
 	var numRecordsByDate = dateDim.group();
 	var entomofaunaGroup = entomofaunaDim.group();
 	var otherInvertebrateGroup = otherInvertebrateDim.group();
+	var vertebrateGroup = vertebrateDim.group();
 	var habitatGroup = habitatDim.group();
 	var locationGroup = locationdDim.group();
 	var all = ndx.groupAll();
@@ -45,9 +46,9 @@ function makeGraphs(error, recordsJson) {
 	var timeChart = dc.barChart("#time-chart");
 	var entomofaunaChart = dc.rowChart("#entomofauna-row-chart");
 	var otherInvertebrateChart = dc.rowChart("#other-invertebrate-row-chart");
+	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
 	var habitatChart = dc.rowChart("#habitat-row-chart");
 	var locationChart = dc.rowChart("#location-row-chart");
-
 
 
 	numberRecordsND
@@ -57,7 +58,7 @@ function makeGraphs(error, recordsJson) {
 
 
 	timeChart
-		.width(650)
+		.width(780)
 		.height(140)
 		.margins({top: 10, right: 50, bottom: 20, left: 20})
 		.dimension(dateDim)
@@ -85,11 +86,21 @@ function makeGraphs(error, recordsJson) {
         .ordering(function(d) { return -d.value })
         .colors(['#6baed6'])
         .elasticX(true)
+		.xAxis().ticks(4);
+		
+	vertebrateChart
+        .width(300)
+        .height(100)
+        .dimension(vertebrateDim)
+        .group(vertebrateGroup)
+        .ordering(function(d) { return -d.value })
+        .colors(['#6baed6'])
+        .elasticX(true)
         .xAxis().ticks(4);
 
 	habitatChart
 		.width(300)
-		.height(310)
+		.height(420)
         .dimension(habitatDim)
         .group(habitatGroup)
         .ordering(function(d) { return -d.value })
@@ -99,7 +110,7 @@ function makeGraphs(error, recordsJson) {
 
     locationChart
     	.width(200)
-		.height(510)
+		.height(545)
         .dimension(locationdDim)
         .group(locationGroup)
         .ordering(function(d) { return -d.value })
@@ -174,7 +185,7 @@ function makeGraphs(error, recordsJson) {
 	drawMap();
 
 	//Update the heatmap if any dc chart get filtered
-	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, habitatChart, locationChart];
+	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart, locationChart];
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {

@@ -27,41 +27,103 @@
 
   <div class="container-fluid">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="col-sm-6">
-        <div class="row">
+      <!-- First View Page -->
+      <!-- States-Map-dateSlider-Counter -->
+      <div class="row">
 
-          <!-- Time Chart --> 
-          <div class="col-sm-12">
-            <div class="chart-wrapper">
-              <div class="chart-title">
-                Number of Records
-              </div>
-              <div class="chart-stage">
-                <div id="time-chart"></div>
-              </div>
-            </div>
-          </div>
-          <!-- Time Chart --> 
+        <div class="col-sm-2">
+          <div class="row">
 
-          <!-- Habitat -->
-          <div class="col-sm-6">
-            <div class="chart-wrapper">
-              <div class="chart-title">
-                Habitat
-              </div>
-              <div class="chart-stage">
-                <div id="habitat-row-chart"></div>
+            <!-- Indian States -->
+            <div class="col-sm-12">
+              <div class="chart-wrapper">
+                <div class="chart-title">
+                  Indian States
+                </div>
+                <div class="chart-stage">
+                  <div id="location-row-chart"></div>
+                </div>
               </div>
             </div>
+            <!-- Indian States -->
           </div>
-          <!-- Habitat -->
+        </div>
+
+        <div class="col-sm-10">
+
+          <!-- Map Row -->
+          <div class="row">
+            <!-- Map -->  
+            <div class="col-sm-12"> 
+              <div class="chart-wrapper">
+                <div class="chart-title">
+                  Map
+                </div>
+                <div class="chart-stage">
+                  <div id="map" style="width: auto; height: 350px"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Map -->  
+          </div>
+
+          <!-- time-chart and counter Row -->
+          <div class="row">
+
+            <!-- Time Chart --> 
+            <div class="col-sm-9">
+              <div class="chart-wrapper">
+                <div class="chart-title">
+                  Number of Records
+                </div>
+                <div class="chart-stage">
+                  <div id="time-chart"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Time Chart --> 
+
+            <!-- Number of records -->
+            <div class="col-sm-3">
+              <div class="chart-wrapper">
+                <div class="chart-title">
+                  Number of Records
+                </div>
+                <div class="chart-stage">
+                  <div id="number-records-nd"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Number of records -->
+          </div>
+
+        </div>  
+
+      </div>
+      <!-- First View Page -->
 
 
-          <div class="col-sm-6">
+      <div class="row">
+        
+        <!-- Habitat <col> -->
+        <!-- Habitat -->
+        <div class="col-sm-4">
+          <div class="chart-wrapper">
+            <div class="chart-title">
+              Habitat
+            </div>
+            <div class="chart-stage">
+              <div id="habitat-row-chart"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Habitat -->
 
-            <div class="row">
+        <div class="col-sm-4">
+
+          <div  class="row">
             <!-- Entomofauna -->
             <div class="col-sm-12">
               <div class="chart-wrapper">
@@ -78,81 +140,77 @@
 
             <!-- Other Invertebrate -->
             <div class="row">
-            <div class="col-sm-12">
-              <div class="chart-wrapper">
-                <div class="chart-title">
-                  Other Invertebrate
+              <div class="col-sm-12">
+                <div class="chart-wrapper">
+                  <div class="chart-title">
+                    Other Invertebrate
+                  </div>
+                  <div class="chart-stage">
+                    <div id="other-invertebrate-row-chart"></div>
+                  </div>
                 </div>
-                <div class="chart-stage">
-                  <div id="other-invertebrate-row-chart"></div>
+              </div>
+              </div>
+              <!-- Other Invertebrate -->
+
+            <!-- Vertebrate -->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="chart-wrapper">
+                  <div class="chart-title">
+                    Vertebrate
+                  </div>
+                  <div class="chart-stage">
+                    <div id="vertebrate-row-chart"></div>
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
-            <!-- Other Invertebrate -->
+            <!-- Vertebrate -->
 
           </div>
-        </div>
-      </div>
 
+          <div class="col-sm-4">
 
-      <div class="col-sm-2">
-        <div class="row">
-
-          <!-- Indian States -->
-          <div class="col-sm-12">
-            <div class="chart-wrapper">
-              <div class="chart-title">
-                Indian States
-              </div>
-              <div class="chart-stage">
-                <div id="location-row-chart"></div>
-              </div>
-            </div>
-          </div>
-          <!-- Indian States -->
-        </div>
-      </div>
-
-
-
-      <div class="col-sm-4">
-
-        <div class="row">
-          <!-- Map -->  
-          <div class="col-sm-12"> 
-            <div class="chart-wrapper">
-              <div class="chart-title">
-                Map
-              </div>
-              <div class="chart-stage">
-                <div id="map" style="width: 400px; height: 380px"></div>
+            <!-- Temperature -->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="chart-wrapper">
+                  <div class="chart-title">
+                    Temperature
+                  </div>
+                  <div class="chart-stage">
+                    <div id="Temperature-row-chart"></div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <!-- Map -->  
-        </div>
+            <!-- Temperature -->
 
-        <div class="row">
-          <!-- Number of records -->
-          <div class="col-sm-12"> 
-            <div class="chart-wrapper">
-              <div class="chart-title">
-                Number of Records
-              </div>
-              <div class="chart-stage">
-                <div id="number-records-nd"></div>
+            <!-- Humidity -->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="chart-wrapper">
+                  <div class="chart-title">
+                    Humidity
+                  </div>
+                  <div class="chart-stage">
+                    <div id="Humidity-row-chart"></div>
+                  </div>
+                </div>
               </div>
             </div>
+            <!-- Humidity -->
+
+
           </div>
-          <!-- Number of records -->
+          
+          
         </div>
 
       </div>
 
     </div>
-
-  </div>
 
   <hr>
 <!--  <p class="small text-muted">Built with &#9829; by <a href="https://keen.io">Keen IO</a></p>-->

@@ -90,6 +90,8 @@ def main():
         data['Entomofauna'] = rand.choice(['Yes', 'No'])
         data['OtherInvertebrate'] = rand.choice(['Yes', 'No'])
         data['Vertebrate'] = rand.choice(['Yes', 'No'])
+        data['Temperature'] = rand.randint(5, 50)
+        data['Humidity'] = rand.randint(45, 75)
 
         list_of_records.append(data)
 

@@ -42,6 +42,8 @@ def index():
 def get_data():
     df = pd.read_csv(data_path + '/Documents/Records.csv')
 
+
+
     return df.to_json(orient='records')
 
 
