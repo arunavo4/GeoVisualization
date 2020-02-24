@@ -8,7 +8,7 @@ function makeGraphs(error, recordsJson) {
 	var dateFormat = d3.time.format("%d-%m-%Y");   //%Y-%m-%d %H:%M:%S
 	
 	records.forEach(function(d) {
-		d["Date"] = dateFormat.parse(d["Date"]);
+		d["timestamp"] = dateFormat.parse(d["Date"]);
 		d["Longitude"] = +d["Longitude"];
 		d["Latitude"] = +d["Latitude"];
 	});
@@ -17,7 +17,7 @@ function makeGraphs(error, recordsJson) {
 	var ndx = crossfilter(records);
 
 	//Define Dimensions
-	var dateDim = ndx.dimension(function(d) { return d["Date"]; });
+	var dateDim = ndx.dimension(function(d) { return d["timestamp"]; });
 	var entomofaunaDim = ndx.dimension(function(d) { return d["Entomofauna"]; });
 	var otherInvertebrateDim = ndx.dimension(function(d) { return d["OtherInvertebrate"]; });
 	var vertebrateDim = ndx.dimension(function(d) { return d["Vertebrate"]; });
@@ -37,8 +37,8 @@ function makeGraphs(error, recordsJson) {
 
 
 	//Define values (to be used in charts)
-	var minDate = dateDim.bottom(1)[0]["Date"];
-	var maxDate = dateDim.top(1)[0]["Date"];
+	var minDate = dateDim.bottom(1)[0]["timestamp"];
+	var maxDate = dateDim.top(1)[0]["timestamp"];
 
 
     //Charts
@@ -169,14 +169,25 @@ function makeGraphs(error, recordsJson) {
 			});
 			
 			function showMarkerData(e){
-                var data =  e.target.data;
-                document.getElementById("thumbnail").src = thumbnail;
+				var data =  e.target.data;
+				document.getElementById("sidebar-title").innertext += "UNIQUE ID" + data.UniqueSurveyID;
+
+				if (data.ImageAnimal != null) {
+					document.getElementById("ImageAnimal").src = data.ImageAnimal;
+				}
+				if (data.ImageHabitat != null) {
+					document.getElementById("ImageHabitat").src = data.ImageHabitat;
+				}
+				if (data.ImageHost != null) {
+					document.getElementById("ImageHost").src = data.ImageHost;
+				}
 
                 //compile the string
-                var record = "";
                 for (var i in data){
-                    console.log(i, data[i]);
-                }
+					if(i != 'Unnamed: 0'){
+						document.getElementById("data").innerHTML += `<p class=\"font-weight-normal\" ><b>` + i + `: </b>` + data[i] + `</p>`;
+					}
+				}
             }
 
             markers.addLayer(marker);
