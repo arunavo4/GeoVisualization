@@ -192,8 +192,11 @@ function makeGraphs(error, recordsJson) {
 		layers: [OpenStreetMap, markers]
 	});
 
+	var layerControl = L.control.layers(baseMaps, overlayMaps);
+	layerControl.addTo(map);
+
 	var drawMap = function(){
-		markers.clearLayers;
+		markers.clearLayers();
 		var markerList = [];
 
 		map.setView(latlng, 5);
@@ -255,7 +258,8 @@ function makeGraphs(error, recordsJson) {
             markers.addLayer(marker);
             markerList.push(marker);
 		  });
-		  L.control.layers(baseMaps, overlayMaps).addTo(map);
+		  baseMaps.OpenStreetMap.addTo(map);
+		  markers.addTo(map);
 	};
 
 	//Draw Map
