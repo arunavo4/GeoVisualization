@@ -10,6 +10,14 @@ import json
 data_path = './static/data'
 
 
+def find_range(x):
+    r_x = round(x, -1)
+    if x > r_x:
+        return f'{r_x}-{r_x + 10}'
+    else:
+        return f'{r_x - 10}-{r_x}'
+
+
 def get_location(longitude, latitude, provinces_json):
     point = Point(longitude, latitude)
 
@@ -52,6 +60,10 @@ def get_data():
     df.loc[df['ImageAnimal'].notna(), 'ImageAnimal'] = prefix + df.loc[df['ImageAnimal'].notna(), 'ImageAnimal']
     df.loc[df['ImageHabitat'].notna(), 'ImageHabitat'] = prefix + df.loc[df['ImageHabitat'].notna(), 'ImageHabitat']
     df.loc[df['ImageHost'].notna(), 'ImageHost'] = prefix + df.loc[df['ImageHost'].notna(), 'ImageHost']
+
+    # Group the Temp and Humidity
+    df['Temperature'] = df['Temperature'].apply(find_range)
+    df['Humidity'] = df['Humidity'].apply(find_range)
 
     return df.to_json(orient='records')
 

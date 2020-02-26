@@ -2,7 +2,7 @@ queue()
     .defer(d3.json, "/data")
     .await(makeGraphs);
 
-function makeGraphs(error, recordsJson) {	
+function makeGraphs(error, recordsJson) {
 	//Clean data
 	var records = recordsJson;
 	var dateFormat = d3.time.format("%d-%m-%Y");   //%Y-%m-%d %H:%M:%S
@@ -23,6 +23,8 @@ function makeGraphs(error, recordsJson) {
 	var vertebrateDim = ndx.dimension(function(d) { return d["Vertebrate"]; });
 	var habitatDim = ndx.dimension(function(d) { return d["Habitat"]; });
 	var locationdDim = ndx.dimension(function(d) { return d["State"]; });
+	var temperatureDim = ndx.dimension(function(d) { return d["Temperature"]; });
+	var humidityDim = ndx.dimension(function(d) { return d["Humidity"]; });
 	var allDim = ndx.dimension(function(d) {return d;});
 
 
@@ -33,13 +35,13 @@ function makeGraphs(error, recordsJson) {
 	var vertebrateGroup = vertebrateDim.group();
 	var habitatGroup = habitatDim.group();
 	var locationGroup = locationdDim.group();
+	var temperatureGroup = temperatureDim.group();
+	var humidityGroup = humidityDim.group();
 	var all = ndx.groupAll();
-
 
 	//Define values (to be used in charts)
 	var minDate = dateDim.bottom(1)[0]["timestamp"];
 	var maxDate = dateDim.top(1)[0]["timestamp"];
-
 
     //Charts
     var numberRecordsND = dc.numberDisplay("#number-records-nd");
@@ -49,13 +51,14 @@ function makeGraphs(error, recordsJson) {
 	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
 	var habitatChart = dc.rowChart("#habitat-row-chart");
 	var locationChart = dc.rowChart("#location-row-chart");
+	var temperatureChart = dc.barChart('#temperature-bar-chart');
+	var humidityChart = dc.barChart('#humidity-bar-chart');
 
 
 	numberRecordsND
 		.formatNumber(d3.format("d"))
 		.valueAccessor(function(d){return d; })
 		.group(all);
-
 
 	timeChart
 		.width(780)
@@ -117,27 +120,87 @@ function makeGraphs(error, recordsJson) {
         .colors(['#6baed6'])
         .elasticX(true)
         .labelOffsetY(10)
-        .xAxis().ticks(4);
+		.xAxis().ticks(4);
+		
+	temperatureChart
+		.width(310)
+		.height(180)
+		.margins({top: 10, right: 20, bottom: 20, left: 50})
+        .dimension(temperatureDim)
+        .group(temperatureGroup)
+		.colors(['#6baed6'])
+		.x(d3.scale.ordinal().domain(temperatureDim)) 
+  		.xUnits(dc.units.ordinal)
+        .elasticY(true)
+        .yAxis().ticks(4);
+
+	humidityChart
+		.width(310)
+		.height(180)
+		.margins({top: 10, right: 20, bottom: 20, left: 50})
+        .dimension(humidityDim)
+        .group(humidityGroup)
+		.colors(['#6baed6'])
+		.x(d3.scale.ordinal().domain(humidityDim)) 
+  		.xUnits(dc.units.ordinal)
+        .elasticY(true)
+        .yAxis().ticks(4);
 
 
-    var latlng = L.latLng(23.07, 80.01);
-	var map = L.map('map');
 
-	var drawMap = function(){
-		var markers = new L.markerClusterGroup();
-		var markerList = [];
-
-        map.setView([23.07, 80.01], 5);
-		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	var latlng = L.latLng(23.07, 80.01);
+	var markers = new L.markerClusterGroup();
+	
+	var OpenStreetMap = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         minZoom: 2,
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
+		});
+    var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+		attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+	});;
+
+	var baseMaps = {
+		"OpenStreetMap": OpenStreetMap,
+		"Satellite": Esri_WorldImagery
+	};
+
+	var state_color = "#6baed6";
+	var district_color = "#7cb342";
+
+	// Read geojson data
+	var state_geojson = L.geoJSON(state_json, {
+		style:{
+			color: state_color
+		}
+	});
+	var district_geojson = L.geoJSON(district_json, {
+		style:{
+			color: district_color
+		}
+	});
+
+	var overlayMaps = {
+		"Markers": markers,
+		"<span style='color: #6baed6'>States</span>": state_geojson,
+		"<span style='color: #7cb342'>Districts</span>": district_geojson
+	};
+
+	var map = L.map('map', {
+		center: latlng,
+		zoom: 5,
+		layers: [OpenStreetMap, markers]
+	});
+
+	var drawMap = function(){
+		markers.clearLayers;
+		var markerList = [];
+
+		map.setView(latlng, 5);
 
 		_.each(allDim.top(Infinity), function (d) {
 			var title = d["UniqueSurveyID"];
 			var thumbnail = d["ImageAnimal"] || d["ImageHabitat"] || d["ImageHost"];
-			console.log(thumbnail);
 			var selfIcon = new L.divIcon({
 				className: 'my-div-icon',
 				iconSize: [50, 50],
@@ -189,16 +252,11 @@ function makeGraphs(error, recordsJson) {
 					}
 				}
             }
-
             markers.addLayer(marker);
             markerList.push(marker);
-			
 		  });
-		
-	    map.addLayer(markers);
+		  L.control.layers(baseMaps, overlayMaps).addTo(map);
 	};
-
-
 
 	//Draw Map
 	drawMap();
