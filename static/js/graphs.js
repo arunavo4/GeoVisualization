@@ -25,6 +25,8 @@ function makeGraphs(error, recordsJson) {
 	var locationdDim = ndx.dimension(function(d) { return d["State"]; });
 	var temperatureDim = ndx.dimension(function(d) { return d["Temperature"]; });
 	var humidityDim = ndx.dimension(function(d) { return d["Humidity"]; });
+	var phylumDim = ndx.dimension(function(d) { return d["Phylum"]; });
+	var classDim = ndx.dimension(function(d) { return d["Class"]; });
 	var allDim = ndx.dimension(function(d) {return d;});
 
 
@@ -37,6 +39,8 @@ function makeGraphs(error, recordsJson) {
 	var locationGroup = locationdDim.group();
 	var temperatureGroup = temperatureDim.group();
 	var humidityGroup = humidityDim.group();
+	var phylumGroup = phylumDim.group();
+	var classGroup = classDim.group();
 	var all = ndx.groupAll();
 
 	//Define values (to be used in charts)
@@ -53,6 +57,8 @@ function makeGraphs(error, recordsJson) {
 	var locationChart = dc.rowChart("#location-row-chart");
 	var temperatureChart = dc.barChart('#temperature-bar-chart');
 	var humidityChart = dc.barChart('#humidity-bar-chart');
+	var pieChart1 = dc.pieChart('#dynamic-pie-chart-1');
+	var pieChart2 = dc.pieChart('#dynamic-pie-chart-2');
 
 
 	numberRecordsND
@@ -144,7 +150,26 @@ function makeGraphs(error, recordsJson) {
 		.x(d3.scale.ordinal().domain(humidityDim)) 
   		.xUnits(dc.units.ordinal)
         .elasticY(true)
-        .yAxis().ticks(4);
+		.yAxis().ticks(4);
+		
+	pieChart1
+		.width(310)
+		.height(180)
+		.dimension(phylumDim)
+		.group(phylumGroup)
+		.legend(dc.legend())
+		.label(function(d) {
+			return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+		});
+
+	pieChart2
+		.width(310)
+		.height(180)
+		.dimension(classDim)
+		.group(classGroup)
+		.label(function(d) {
+			return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+		});
 
 
 
@@ -157,6 +182,8 @@ function makeGraphs(error, recordsJson) {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 		});
     var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+		maxZoom: 18,
+        minZoom: 2,
 		attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 	});;
 
@@ -266,7 +293,8 @@ function makeGraphs(error, recordsJson) {
 	drawMap();
 
 	//Update the heatmap if any dc chart get filtered
-	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart, locationChart];
+	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
+		 locationChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {

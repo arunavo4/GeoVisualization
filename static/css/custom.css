@@ -4,9 +4,26 @@
     height: 140px;
 }
 
+.navbar-right{
+    padding-right: 10px;
+}
+
+.navbar-right>img {
+    height: 50px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2px;
+    padding-right: 2px;
+    vertical-align: middle;
+    width: auto;
+}
+
 .dc-chart g.row text {
     fill: black;
+}
 
+.dc-chart .pie-slice text {
+    fill: black;
 }
 
 .circle_img {
