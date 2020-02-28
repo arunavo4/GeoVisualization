@@ -27,6 +27,9 @@ function makeGraphs(error, recordsJson) {
 	var humidityDim = ndx.dimension(function(d) { return d["Humidity"]; });
 	var phylumDim = ndx.dimension(function(d) { return d["Phylum"]; });
 	var classDim = ndx.dimension(function(d) { return d["Class"]; });
+	var orderDim = ndx.dimension(function(d) { return d["Order"]; });
+	var familyDim = ndx.dimension(function(d) { return d["Family"]; });
+	var genusDim = ndx.dimension(function(d) { return d["Genus"]; });
 	var allDim = ndx.dimension(function(d) {return d;});
 
 
@@ -41,6 +44,9 @@ function makeGraphs(error, recordsJson) {
 	var humidityGroup = humidityDim.group();
 	var phylumGroup = phylumDim.group();
 	var classGroup = classDim.group();
+	var orderGroup = orderDim.group();
+	var familyGroup = familyDim.group();
+	var genusGroup = genusDim.group();
 	var all = ndx.groupAll();
 
 	//Define values (to be used in charts)
@@ -60,6 +66,28 @@ function makeGraphs(error, recordsJson) {
 	var pieChart1 = dc.pieChart('#dynamic-pie-chart-1');
 	var pieChart2 = dc.pieChart('#dynamic-pie-chart-2');
 
+	var key_map = {
+		Phylum: {
+			Dim: phylumDim,
+			Group: phylumGroup
+		},
+		Class: {
+			Dim: classDim,
+			Group: classGroup
+		},
+		Order: {
+			Dim: orderDim,
+			Group: orderGroup
+		},
+		Family: {
+			Dim: familyDim,
+			Group: familyGroup
+		},
+		Genus: {
+			Dim: genusDim,
+			Group: genusGroup
+		}
+	};
 
 	numberRecordsND
 		.formatNumber(d3.format("d"))
@@ -154,25 +182,48 @@ function makeGraphs(error, recordsJson) {
 		
 	pieChart1
 		.width(310)
-		.height(180)
+		.height(178)
 		.dimension(phylumDim)
 		.group(phylumGroup)
-		.legend(dc.legend())
 		.label(function(d) {
 			return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
 		});
 
 	pieChart2
 		.width(310)
-		.height(180)
+		.height(178)
 		.dimension(classDim)
 		.group(classGroup)
 		.label(function(d) {
 			return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
 		});
 
+	$('#dropdown-menu-1 a').on('click', function(){    
+		$('#toggle-1').html($(this).html() + '<span class="caret"></span>');
+		pieChart1
+			.width(310)
+			.height(178)
+			.dimension(key_map[$(this).text()].Dim)
+			.group(key_map[$(this).text()].Group)
+			.label(function(d) {
+				return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+			});  
+		pieChart1.filterAll();dc.redrawAll();  
+	})
 
-
+	$('#dropdown-menu-2 a').on('click', function(){    
+		$('#toggle-2').html($(this).html() + '<span class="caret"></span>');   
+		pieChart2
+			.width(310)
+			.height(178)
+			.dimension(key_map[$(this).text()].Dim)
+			.group(key_map[$(this).text()].Group)
+			.label(function(d) {
+				return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+			});  
+		pieChart2.filterAll();dc.redrawAll();   
+	})
+	
 	var latlng = L.latLng(23.07, 80.01);
 	var markers = new L.markerClusterGroup();
 	
