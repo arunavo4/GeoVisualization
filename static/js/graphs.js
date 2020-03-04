@@ -95,9 +95,9 @@ function makeGraphs(error, recordsJson) {
 		.group(all);
 
 	timeChart
-		.width(780)
-		.height(140)
-		.margins({top: 10, right: 50, bottom: 20, left: 20})
+		.width(790)
+		.height(138)
+		.margins({top: 10, right: 0, bottom: 20, left: 20})
 		.dimension(dateDim)
 		.group(numRecordsByDate)
 		.transitionDuration(500)
@@ -136,7 +136,7 @@ function makeGraphs(error, recordsJson) {
         .xAxis().ticks(4);
 
 	habitatChart
-		.width(300)
+		.width(330)
 		.height(420)
         .dimension(habitatDim)
         .group(habitatGroup)
@@ -147,7 +147,7 @@ function makeGraphs(error, recordsJson) {
 
     locationChart
     	.width(200)
-		.height(545)
+		.height(560)
         .dimension(locationdDim)
         .group(locationGroup)
         .ordering(function(d) { return -d.value })
@@ -157,9 +157,9 @@ function makeGraphs(error, recordsJson) {
 		.xAxis().ticks(4);
 		
 	temperatureChart
-		.width(310)
+		.width(350)
 		.height(180)
-		.margins({top: 10, right: 20, bottom: 20, left: 50})
+		.margins({top: 10, right: 10, bottom: 20, left: 50})
         .dimension(temperatureDim)
         .group(temperatureGroup)
 		.colors(['#6baed6'])
@@ -169,7 +169,7 @@ function makeGraphs(error, recordsJson) {
         .yAxis().ticks(4);
 
 	humidityChart
-		.width(310)
+		.width(350)
 		.height(180)
 		.margins({top: 10, right: 20, bottom: 20, left: 50})
         .dimension(humidityDim)
@@ -223,6 +223,34 @@ function makeGraphs(error, recordsJson) {
 			});  
 		pieChart2.filterAll();dc.redrawAll();   
 	})
+
+	// $(function () {
+	// 	$('#dateStart').datetimepicker();
+	// 	$('#dateEnd').datetimepicker({
+	// 		useCurrent: false //Important! See issue #1075
+	// 	});
+	// 	$("#dateStart").on("dp.change", function (e) {
+	// 		$('#dateEnd').data("DateTimePicker").minDate(e.date);
+	// 	});
+	// 	$("#dateEnd").on("dp.change", function (e) {
+	// 		$('#dateStart').data("DateTimePicker").maxDate(e.date);
+	// 	});
+	// });
+
+	function formatDate(date) {
+		var day = date.getDate();
+		var monthIndex = date.getMonth() + 1;
+		var year = date.getFullYear();
+	  
+		return day + '/' + monthIndex + '/' + year;
+	}
+
+	function updateRange(start, end) {
+		$('#inputdatestart').attr('readonly',true).val(formatDate(start));
+		$('#inputdateend').attr('readonly',true).val(formatDate(end));
+	}
+
+	updateRange(minDate, maxDate);
 	
 	var latlng = L.latLng(23.07, 80.01);
 	var markers = new L.markerClusterGroup();
@@ -353,7 +381,14 @@ function makeGraphs(error, recordsJson) {
 				map.removeLayer(layer)
 			}); 
 			drawMap();
+
 		});
+	});
+
+	timeChart.on("filtered", function (chart, filter) {
+		if (filter!=null){
+			updateRange(filter[0], filter[1]);
+		}
 	});
 
 	dc.renderAll();

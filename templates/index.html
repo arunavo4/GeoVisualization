@@ -150,7 +150,25 @@
             <div class="col-sm-9">
               <div class="chart-wrapper">
                 <div class="chart-title">
-                  Number of Records
+                  <div class="row" id="therow">
+                    <div class='col-sm-8' id="datetitle">
+                      Number of Records
+                    </div>
+                    <div class='col-sm-2' id='datestart'>
+                        <div class="form-group">
+                            <div class='input-group-sm date'>
+                                <input type='text' class="form-control" placeholder="DD/MM/YYYY" type="text" id='inputdatestart'/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-sm-2' id='dateend'>
+                        <div class="form-group">
+                            <div class='input-group-sm date'>
+                                <input type='text' class="form-control" placeholder="DD/MM/YYYY" type="text" id='inputdateend'/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                   <span>
                     <a class="reset"
                       href="javascript:timeChart.filterAll();dc.redrawAll();"
