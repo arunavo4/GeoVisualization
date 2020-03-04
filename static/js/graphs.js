@@ -13,6 +13,18 @@ function makeGraphs(error, recordsJson) {
 		d["Latitude"] = +d["Latitude"];
 	});
 
+	//Filter out non-empty bins
+	function remove_empty_bins(source_group) {
+		return {
+			all:function () {
+				return source_group.all().filter(function(d) {
+					console.log(d);
+					return d.value != 0;
+				});
+			}
+		};
+	}
+
 	//Create a Crossfilter instance
 	var ndx = crossfilter(records);
 
@@ -33,7 +45,6 @@ function makeGraphs(error, recordsJson) {
 	var genusDim = ndx.dimension(function(d) { return d["Genus"]; });
 	var allDim = ndx.dimension(function(d) {return d;});
 
-
 	//Group Data
 	var numRecordsByDate = dateDim.group();
 	var entomofaunaGroup = entomofaunaDim.group();
@@ -50,6 +61,7 @@ function makeGraphs(error, recordsJson) {
 	var familyGroup = familyDim.group();
 	var genusGroup = genusDim.group();
 	var all = ndx.groupAll();
+	var nonEmptyDistrict = remove_empty_bins(districtGroup);
 
 	//Define values (to be used in charts)
 	var minDate = dateDim.bottom(1)[0]["timestamp"];
@@ -100,7 +112,7 @@ function makeGraphs(error, recordsJson) {
 	timeChart
 		.width(790)
 		.height(138)
-		.margins({top: 10, right: 0, bottom: 20, left: 20})
+		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
 		.group(numRecordsByDate)
 		.transitionDuration(500)
@@ -163,11 +175,11 @@ function makeGraphs(error, recordsJson) {
     	.width(200)
 		.height(545)
         .dimension(districtDim)
-        .group(districtGroup)
+        .group(nonEmptyDistrict)
         .ordering(function(d) { return -d.value })
         .colors(['#6baed6'])
         .elasticX(true)
-        .labelOffsetY(10)
+		.labelOffsetY(10)
 		.xAxis().ticks(4);
 		
 	temperatureChart
