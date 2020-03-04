@@ -273,16 +273,19 @@ function makeGraphs(error, recordsJson) {
 
 	var state_color = "#6baed6";
 	var district_color = "#7cb342";
+	var fillColor = '#00000000';
 
 	// Read geojson data
 	var state_geojson = L.geoJSON(state_json, {
 		style:{
-			color: state_color
+			color: state_color,
+			fillColor: fillColor
 		}
 	});
 	var district_geojson = L.geoJSON(district_json, {
 		style:{
-			color: district_color
+			color: district_color,
+			fillColor: fillColor
 		}
 	});
 
