@@ -22,7 +22,8 @@ function makeGraphs(error, recordsJson) {
 	var otherInvertebrateDim = ndx.dimension(function(d) { return d["OtherInvertebrate"]; });
 	var vertebrateDim = ndx.dimension(function(d) { return d["Vertebrate"]; });
 	var habitatDim = ndx.dimension(function(d) { return d["Habitat"]; });
-	var locationdDim = ndx.dimension(function(d) { return d["State"]; });
+	var stateDim = ndx.dimension(function(d) { return d["State"]; });
+	var districtDim = ndx.dimension(function(d) { return d["District"]; });
 	var temperatureDim = ndx.dimension(function(d) { return d["Temperature"]; });
 	var humidityDim = ndx.dimension(function(d) { return d["Humidity"]; });
 	var phylumDim = ndx.dimension(function(d) { return d["Phylum"]; });
@@ -39,7 +40,8 @@ function makeGraphs(error, recordsJson) {
 	var otherInvertebrateGroup = otherInvertebrateDim.group();
 	var vertebrateGroup = vertebrateDim.group();
 	var habitatGroup = habitatDim.group();
-	var locationGroup = locationdDim.group();
+	var stateGroup = stateDim.group();
+	var districtGroup = districtDim.group();
 	var temperatureGroup = temperatureDim.group();
 	var humidityGroup = humidityDim.group();
 	var phylumGroup = phylumDim.group();
@@ -60,7 +62,8 @@ function makeGraphs(error, recordsJson) {
 	var otherInvertebrateChart = dc.rowChart("#other-invertebrate-row-chart");
 	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
 	var habitatChart = dc.rowChart("#habitat-row-chart");
-	var locationChart = dc.rowChart("#location-row-chart");
+	var stateChart = dc.rowChart("#state-row-chart");
+	var districtChart = dc.rowChart("#district-row-chart");
 	var temperatureChart = dc.barChart('#temperature-bar-chart');
 	var humidityChart = dc.barChart('#humidity-bar-chart');
 	var pieChart1 = dc.pieChart('#dynamic-pie-chart-1');
@@ -145,11 +148,22 @@ function makeGraphs(error, recordsJson) {
         .elasticX(true)
         .xAxis().ticks(4);
 
-    locationChart
+    stateChart
     	.width(200)
-		.height(560)
-        .dimension(locationdDim)
-        .group(locationGroup)
+		.height(545)
+        .dimension(stateDim)
+        .group(stateGroup)
+        .ordering(function(d) { return -d.value })
+        .colors(['#6baed6'])
+        .elasticX(true)
+        .labelOffsetY(10)
+		.xAxis().ticks(4);
+
+	districtChart
+    	.width(200)
+		.height(545)
+        .dimension(districtDim)
+        .group(districtGroup)
         .ordering(function(d) { return -d.value })
         .colors(['#6baed6'])
         .elasticX(true)
@@ -376,7 +390,7 @@ function makeGraphs(error, recordsJson) {
 
 	//Update the heatmap if any dc chart get filtered
 	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
-		 locationChart, humidityChart, temperatureChart, pieChart1, pieChart2];
+		 stateChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {

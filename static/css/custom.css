@@ -4,6 +4,12 @@
     height: 160px;
 }
 
+.nav-tabs{
+    padding-top: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
 .chart-title>a {
     font-size:14px;
     float: right;

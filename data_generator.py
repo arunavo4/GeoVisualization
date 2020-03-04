@@ -77,7 +77,7 @@ def generate_random_point(polygon):
 def get_random_location(geojson):
     record = rand.choice(geojson['features'])
     polygon = shape(record['geometry'])
-    return record['properties']['NAME_1'], generate_random_point(polygon)
+    return record['properties']['NAME_1'], record['properties']['NAME_2'], generate_random_point(polygon)
 
 
 def random_date_time():
@@ -105,10 +105,11 @@ def main():
         date_time = random_date_time()
         data['Date'] = date_time[0]
         data['Time'] = date_time[1]
-        state, latlag = get_random_location(district_json)
+        state, district, latlag = get_random_location(district_json)
         data['Latitude'] = latlag.y
         data['Longitude'] = latlag.x
         data['State'] = state
+        data['District'] = district
         data['Habitat'] = rand.choice(['Aquatic_Marine',
                                        'Aquatic_Freshwater',
                                        'Aquatic_Estuarine',

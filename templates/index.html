@@ -105,19 +105,26 @@
             <!-- Indian States -->
             <div class="col-sm-12">
               <div class="chart-wrapper">
-                <div class="chart-title">
-                  Indian States
-                  <span>
-                    <a class="reset"
-                      href="javascript:locationChart.filterAll();dc.redrawAll();"
-                      style="display: none;">
-                      reset
-                    </a>
-                  </span>
-                </div>
-                <div class="chart-stage">
-                  <div id="location-row-chart"></div>
-                </div>
+                <!-- Tabs -->
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab1">States</a></li>
+                    <li><a data-toggle="tab" href="#tab2">District</a></li>
+                  </ul>
+                  <!-- Tabs -->
+                  <!-- Tab-content -->
+                  <div class="tab-content">
+                    <div id="tab1" class="tab-pane fade in active">
+                      <div class="chart-stage">
+                        <div id="state-row-chart"></div>
+                      </div>
+                    </div>
+                    <div id="tab2" class="tab-pane fade">
+                      <div class="chart-stage">
+                        <div id="district-row-chart"></div>
+                      </div>
+                    </div>
+                  </div>                
+                  <!-- Tab-content -->
               </div>
             </div>
             <!-- Indian States -->
