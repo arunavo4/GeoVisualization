@@ -396,6 +396,14 @@ function makeGraphs(error, recordsJson) {
 		layers: [OpenStreetMap, markers]
 	});
 
+	var controlSearch = new L.Control.Search({
+		position: 'topright',
+		layer: markers,
+		initial: false,
+		zoom: 18,
+		marker: false
+	});
+
 	var layerControl = L.control.layers(baseMaps, overlayMaps);
 	layerControl.addTo(map);
 
@@ -462,8 +470,23 @@ function makeGraphs(error, recordsJson) {
             markers.addLayer(marker);
             markerList.push(marker);
 		  });
-		  baseMaps.OpenStreetMap.addTo(map);
-		  markers.addTo(map);
+
+		controlSearch.on('search:locationfound', function (e) {
+            if (e.layer._popup) {
+                var index = markerList.map(function (e) {
+                    return e.options.title;
+                }).indexOf(e.text);
+                var m = markerList[index];
+                markers.zoomToShowLayer(m, function () {
+                    m.openPopup();
+                    m.bounce(3);
+                });
+            }
+        });
+		map.addControl(controlSearch);
+		
+		baseMaps.OpenStreetMap.addTo(map);
+		markers.addTo(map);
 	};
 
 	//Draw Map
@@ -482,15 +505,17 @@ function makeGraphs(error, recordsJson) {
 				if (filter!=null){
 					updateRange(filter[0], filter[1]);
 				}
-			}else if (chart==stateChart) {
-				if (filter!=null){
-					update_state_layer(filter);
-				}
-			}else if (chart==districtChart) {
-				if (filter!=null){
-					update_district_layer(filter);
-				}
 			}
+			// else if (chart==stateChart) {
+			// 	if (filter!=null){
+			// 		update_state_layer(filter);
+			// 	}
+			// }
+			// else if (chart==districtChart) {
+			// 	if (filter!=null){
+			// 		update_district_layer(filter);
+			// 	}
+			// }
 			drawMap();
 			
 		});
