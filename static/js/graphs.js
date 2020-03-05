@@ -18,7 +18,6 @@ function makeGraphs(error, recordsJson) {
 		return {
 			all:function () {
 				return source_group.all().filter(function(d) {
-					console.log(d);
 					return d.value != 0;
 				});
 			}
@@ -301,19 +300,89 @@ function makeGraphs(error, recordsJson) {
 	var district_color = "#7cb342";
 	var fillColor = '#00000000';
 
+	//add extra var show_on_map:true
+	// state_json.forEach(element => {
+	// 	element.properties["show_on_map"] = true;
+	// });
+
+	// district_json.forEach(element => {
+	// 	element.properties["show_on_map"] = true;
+	// });
+
+	var selected_states = [];
+	var selected_districts = [];
+
+	var states_layer = {};
+	var districts_layer = {};
+
 	// Read geojson data
 	var state_geojson = L.geoJSON(state_json, {
 		style:{
 			color: state_color,
 			fillColor: fillColor
+		},
+		filter: function(feature, layer) {
+			states_layer[feature.properties.NAME_1] = layer;
+			// return feature.properties.show_on_map;
 		}
 	});
+
 	var district_geojson = L.geoJSON(district_json, {
 		style:{
 			color: district_color,
 			fillColor: fillColor
+		},
+		filter: function(feature, layer) {
+			districts_layer[feature.properties.NAME_2] = layer;
+			// return feature.properties.show_on_map;
 		}
 	});
+
+	function update_state_layer(state) {
+		if(!selected_states.includes(state)){
+			selected_states.push(state);
+		}
+		else {
+			selected_states.pop(state);
+		}
+		// state_json.forEach(element => {
+		// 	console.log
+		// 	var feature = states_layer[element.properties.NAME_1];
+		// 	if (feature!=null) {
+		// 		console.log(element.properties.NAME_1);
+		// 		state_geojson.removeLayer();
+
+		// 		element.properties["show_on_map"] = selected_states.includes(element.properties.NAME_1);
+		// 		if (element.properties["show_on_map"]) {
+		// 			state_geojson.addData(states_layer[element.properties.NAME_1]);
+		// 		}
+		// 	}
+		// });	
+		console.log(state_geojson.layers);
+		console.log(states_layer);
+		console.log(states_layer[state]);
+		state_geojson.addData(states_layer[state]);
+	}
+
+	function update_district_layer(district) {
+		if(!selected_districts.includes(district)){
+			selected_districts.push(district);
+		}
+		else {
+			selected_districts.pop(district);
+		}
+		// district_json.forEach(element => {
+		// 	district_geojson.removeLayer(districts_layer[element.properties.NAME_2]);
+
+		// 	element.properties["show_on_map"] = selected_districts.includes(element.properties.NAME_2);
+		// 	if (element.properties["show_on_map"]) {
+		// 		district_geojson.addData(districts_layer[element.properties.NAME_2]);
+		// 	}
+		// });	
+		console.log(districts_layer);
+		console.log(districts_layer[district]);
+		district_geojson.addData(districts_layer[district]);
+	}
 
 	var overlayMaps = {
 		"Markers": markers,
@@ -408,16 +477,23 @@ function makeGraphs(error, recordsJson) {
 		dcChart.on("filtered", function (chart, filter) {
 			map.eachLayer(function (layer) {
 				map.removeLayer(layer)
-			}); 
+			});
+			if (chart==timeChart) {
+				if (filter!=null){
+					updateRange(filter[0], filter[1]);
+				}
+			}else if (chart==stateChart) {
+				if (filter!=null){
+					update_state_layer(filter);
+				}
+			}else if (chart==districtChart) {
+				if (filter!=null){
+					update_district_layer(filter);
+				}
+			}
 			drawMap();
-
+			
 		});
-	});
-
-	timeChart.on("filtered", function (chart, filter) {
-		if (filter!=null){
-			updateRange(filter[0], filter[1]);
-		}
 	});
 
 	dc.renderAll();
