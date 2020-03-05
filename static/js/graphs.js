@@ -300,15 +300,6 @@ function makeGraphs(error, recordsJson) {
 	var district_color = "#7cb342";
 	var fillColor = '#00000000';
 
-	//add extra var show_on_map:true
-	state_json.forEach(element => {
-		element.properties["show_on_map"] = true;
-	});
-
-	district_json.forEach(element => {
-		element.properties["show_on_map"] = true;
-	});
-
 	var selected_states = [];
 	var selected_districts = [];
 
@@ -316,72 +307,78 @@ function makeGraphs(error, recordsJson) {
 	var districts_layer = {};
 
 	// Read geojson data
-	var state_geojson = L.geoJSON(state_json, {
-		style:{
-			color: state_color,
-			fillColor: fillColor
-		},
-		filter: function(feature, layer) {
-			states_layer[feature.properties.NAME_1] = layer;
-			return feature.properties.show_on_map;
-		}
+	state_json.forEach(element => {
+		var state = L.geoJSON([element], {
+			style:{
+				color: state_color,
+				fillColor: fillColor
+			}
+		});
+		states_layer[element.properties.NAME_1] = state;
 	});
 
-	var district_geojson = L.geoJSON(district_json, {
-		style:{
-			color: district_color,
-			fillColor: fillColor
-		},
-		filter: function(feature, layer) {
-			districts_layer[feature.properties.NAME_2] = layer;
-			return feature.properties.show_on_map;
-		}
+	district_json.forEach(element => {
+		var district = L.geoJSON([element], {
+			style:{
+				color: district_color,
+				fillColor: fillColor
+			}
+		});
+		districts_layer[element.properties.NAME_2] = district;
 	});
 
+	var state_geojson = L.layerGroup(Object.values(states_layer));
+	var district_geojson = L.layerGroup(Object.values(districts_layer));
+
+	function reset_geojson() {
+		var states = Object.values(states_layer);
+		var districts = Object.values(districts_layer);
+		
+		state_geojson.clearLayers();
+		states.forEach(element => {
+			state_geojson.addLayer(element)
+		});
+
+		district_geojson.clearLayers();
+		districts.forEach(element => {
+			district_geojson.addLayer(element);
+		});
+	}
+	
 	function update_state_layer(state) {
+		state_geojson.clearLayers();
 		if(!selected_states.includes(state)){
 			selected_states.push(state);
 		}
 		else {
 			selected_states.pop(state);
 		}
-		// state_json.forEach(element => {
-		// 	console.log
-		// 	var feature = states_layer[element.properties.NAME_1];
-		// 	if (feature!=null) {
-		// 		console.log(element.properties.NAME_1);
-		// 		state_geojson.removeLayer();
 
-		// 		element.properties["show_on_map"] = selected_states.includes(element.properties.NAME_1);
-		// 		if (element.properties["show_on_map"]) {
-		// 			state_geojson.addData(states_layer[element.properties.NAME_1]);
-		// 		}
-		// 	}
-		// });	
-		console.log(state_geojson.layers);
-		console.log(states_layer);
-		console.log(states_layer[state]);
-		state_geojson.addData(states_layer[state]);
+		if (selected_states.length==0) {
+			reset_geojson();
+		} else {
+			selected_states.forEach(element => {
+				state_geojson.addLayer(states_layer[element]);
+			});
+		}
 	}
 
 	function update_district_layer(district) {
+		district_geojson.clearLayers();
 		if(!selected_districts.includes(district)){
 			selected_districts.push(district);
 		}
 		else {
 			selected_districts.pop(district);
 		}
-		// district_json.forEach(element => {
-		// 	district_geojson.removeLayer(districts_layer[element.properties.NAME_2]);
 
-		// 	element.properties["show_on_map"] = selected_districts.includes(element.properties.NAME_2);
-		// 	if (element.properties["show_on_map"]) {
-		// 		district_geojson.addData(districts_layer[element.properties.NAME_2]);
-		// 	}
-		// });	
-		console.log(districts_layer);
-		console.log(districts_layer[district]);
-		district_geojson.addData(districts_layer[district]);
+		if (selected_districts.length==0) {
+			reset_geojson();
+		} else {
+			selected_districts.forEach(element => {
+				district_geojson.addLayer(districts_layer[element]);
+			});
+		}
 	}
 
 	var overlayMaps = {
@@ -507,7 +504,7 @@ function makeGraphs(error, recordsJson) {
 				}
 			}
 		}
-		
+
 		controlSearch.on('search:locationfound', function (e) {
             if (e.layer._popup) {
                 var index = markerList.map(function (e) {
@@ -543,21 +540,20 @@ function makeGraphs(error, recordsJson) {
 					updateRange(filter[0], filter[1]);
 				}
 			}
-			// else if (chart==stateChart) {
-			// 	if (filter!=null){
-			// 		update_state_layer(filter);
-			// 	}
-			// }
-			// else if (chart==districtChart) {
-			// 	if (filter!=null){
-			// 		update_district_layer(filter);
-			// 	}
-			// }
+			else if (chart==stateChart) {
+				if (filter!=null){
+					update_state_layer(filter);
+				}
+			}
+			else if (chart==districtChart) {
+				if (filter!=null){
+					update_district_layer(filter);
+				}
+			}
 			drawMap(active);
 			
 		});
 	});
 
 	dc.renderAll();
-
 };
