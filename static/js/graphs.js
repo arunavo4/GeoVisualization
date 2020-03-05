@@ -301,13 +301,13 @@ function makeGraphs(error, recordsJson) {
 	var fillColor = '#00000000';
 
 	//add extra var show_on_map:true
-	// state_json.forEach(element => {
-	// 	element.properties["show_on_map"] = true;
-	// });
+	state_json.forEach(element => {
+		element.properties["show_on_map"] = true;
+	});
 
-	// district_json.forEach(element => {
-	// 	element.properties["show_on_map"] = true;
-	// });
+	district_json.forEach(element => {
+		element.properties["show_on_map"] = true;
+	});
 
 	var selected_states = [];
 	var selected_districts = [];
@@ -323,7 +323,7 @@ function makeGraphs(error, recordsJson) {
 		},
 		filter: function(feature, layer) {
 			states_layer[feature.properties.NAME_1] = layer;
-			// return feature.properties.show_on_map;
+			return feature.properties.show_on_map;
 		}
 	});
 
@@ -334,7 +334,7 @@ function makeGraphs(error, recordsJson) {
 		},
 		filter: function(feature, layer) {
 			districts_layer[feature.properties.NAME_2] = layer;
-			// return feature.properties.show_on_map;
+			return feature.properties.show_on_map;
 		}
 	});
 
@@ -404,10 +404,36 @@ function makeGraphs(error, recordsJson) {
 		marker: false
 	});
 
-	var layerControl = L.control.layers(baseMaps, overlayMaps);
+	
+	// Add method to layer control class
+	L.Control.Layers.include({
+		getOverlays: function() {
+		  // create hash to hold all layers
+		  var control, layers;
+		  layers = {};
+		  control = this;
+	  
+		  // loop thru all layers in control
+		  control._layers.forEach(function(obj) {
+			var layerName;
+
+			// get name of overlay
+			layerName = obj.name;
+			// store whether it's present on the map or not
+			return layers[layerName] = control._map.hasLayer(obj.layer);
+			
+		  });
+	  
+		  return layers;
+		}
+	});
+
+	var layerControl = new L.Control.Layers(baseMaps, overlayMaps);
 	layerControl.addTo(map);
 
-	var drawMap = function(){
+	map._layersMaxZoom = 18;
+
+	var drawMap = function(active){
 		markers.clearLayers();
 		var markerList = [];
 
@@ -469,8 +495,19 @@ function makeGraphs(error, recordsJson) {
             }
             markers.addLayer(marker);
             markerList.push(marker);
-		  });
-
+		  });		
+		
+		for (const layer in active) {
+			if (active[layer]) {
+				if (layer in baseMaps){
+					baseMaps[layer].addTo(map);
+				}
+				else if(layer in overlayMaps){
+					overlayMaps[layer].addTo(map);
+				}
+			}
+		}
+		
 		controlSearch.on('search:locationfound', function (e) {
             if (e.layer._popup) {
                 var index = markerList.map(function (e) {
@@ -484,13 +521,10 @@ function makeGraphs(error, recordsJson) {
             }
         });
 		map.addControl(controlSearch);
-		
-		baseMaps.OpenStreetMap.addTo(map);
-		markers.addTo(map);
 	};
 
 	//Draw Map
-	drawMap();
+	drawMap(layerControl.getOverlays());
 
 	//Update the heatmap if any dc chart get filtered
 	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
@@ -498,6 +532,9 @@ function makeGraphs(error, recordsJson) {
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {
+			// Get active layers before deleting them
+			var active = layerControl.getOverlays();
+
 			map.eachLayer(function (layer) {
 				map.removeLayer(layer)
 			});
@@ -516,7 +553,7 @@ function makeGraphs(error, recordsJson) {
 			// 		update_district_layer(filter);
 			// 	}
 			// }
-			drawMap();
+			drawMap(active);
 			
 		});
 	});
