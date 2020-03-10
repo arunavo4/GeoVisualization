@@ -154,12 +154,17 @@
           <div class="row">
 
             <!-- Time Chart --> 
-            <div class="col-sm-9">
+            <div class="col-sm-12">
               <div class="chart-wrapper">
                 <div class="chart-title">
                   <div class="row" id="therow">
                     <div class='col-sm-8' id="datetitle">
-                      Number of Records
+                      <div class="row" id="therow">
+                        <div class='col-sm-8' id="datetitle">
+                          Number of Records
+                        </div>
+                        <div class='col-sm-4' id="number-records-nd"></div>
+                      </div>
                     </div>
                     <div class='col-sm-2' id='datestart'>
                         <div class="form-group">
@@ -175,34 +180,19 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                  <span>
-                    <a class="reset"
-                      href="javascript:timeChart.filterAll();dc.redrawAll();"
-                      style="display: none;">
-                      reset
-                    </a>
-                  </span>
+                  </div>
                 </div>
                 <div class="chart-stage">
-                  <div id="time-chart"></div>
+                  <div class="chart-stage">
+                    <div id="dynamic-bar-chart"></div>
+                  </div>
+                  <div class="chart-stage">
+                    <div id="time-chart"></div>
+                  </div>
                 </div>
               </div>
             </div>
             <!-- Time Chart --> 
-
-            <!-- Number of records -->
-            <div class="col-sm-3">
-              <div class="chart-wrapper">
-                <div class="chart-title">
-                  Number of Records
-                </div>
-                <div class="chart-stage">
-                  <div id="number-records-nd"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Number of records -->
           </div>
 
         </div>  

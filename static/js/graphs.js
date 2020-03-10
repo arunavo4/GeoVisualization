@@ -61,6 +61,7 @@ function makeGraphs(error, recordsJson) {
 	var genusGroup = genusDim.group();
 	var all = ndx.groupAll();
 	var nonEmptyDistrict = remove_empty_bins(districtGroup);
+	var nonEmptyDate = remove_empty_bins(numRecordsByDate);
 
 	//Define values (to be used in charts)
 	var minDate = dateDim.bottom(1)[0]["timestamp"];
@@ -69,6 +70,7 @@ function makeGraphs(error, recordsJson) {
     //Charts
     var numberRecordsND = dc.numberDisplay("#number-records-nd");
 	var timeChart = dc.barChart("#time-chart");
+	var barChart = dc.barChart("#dynamic-bar-chart");
 	var entomofaunaChart = dc.rowChart("#entomofauna-row-chart");
 	var otherInvertebrateChart = dc.rowChart("#other-invertebrate-row-chart");
 	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
@@ -109,15 +111,26 @@ function makeGraphs(error, recordsJson) {
 		.group(all);
 
 	timeChart
-		.width(790)
-		.height(138)
+		.width(1080)
+		.height(50)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
-		.group(numRecordsByDate)
+		.brushOn(true)
+		.group(nonEmptyDate)
 		.transitionDuration(500)
 		.x(d3.time.scale().domain([minDate, maxDate]))
 		.elasticY(true)
 		.yAxis().ticks(4);
+
+	barChart
+		.width(1080)
+		.height(138)
+		.margins({top: 10, right: 10, bottom: 20, left: 20})
+		.dimension(dateDim)
+		.brushOn(false)
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.group(numRecordsByDate)
+		.transitionDuration(500);
 
 	entomofaunaChart
         .width(300)
@@ -271,6 +284,9 @@ function makeGraphs(error, recordsJson) {
 	}
 
 	function updateRange(start, end) {
+		timeChart
+			.x(d3.time.scale().domain([start, end]))
+			.rescale();
 		$('#inputdatestart').attr('readonly',true).val(formatDate(start));
 		$('#inputdateend').attr('readonly',true).val(formatDate(end));
 	}
@@ -285,6 +301,7 @@ function makeGraphs(error, recordsJson) {
         minZoom: 2,
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 		});
+
     var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 		maxZoom: 18,
         minZoom: 2,
@@ -523,9 +540,27 @@ function makeGraphs(error, recordsJson) {
 	//Draw Map
 	drawMap(layerControl.getOverlays());
 
+	// we need to this helper function out of coordinateGridMixin
+    function rangesEqual(range1, range2) {
+        if (!range1 && !range2) {
+            return true;
+        }
+        else if (!range1 || !range2) {
+            return false;
+        }
+        else if (range1.length === 0 && range2.length === 0) {
+            return true;
+        }
+        else if (range1[0].valueOf() === range2[0].valueOf() &&
+            range1[1].valueOf() === range2[1].valueOf()) {
+            return true;
+        }
+        return false;
+	}
+
 	//Update the heatmap if any dc chart get filtered
 	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
-		 stateChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
+		 stateChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {
@@ -537,7 +572,11 @@ function makeGraphs(error, recordsJson) {
 			});
 			if (chart==timeChart) {
 				if (filter!=null){
-					updateRange(filter[0], filter[1]);
+					if (!rangesEqual(timeChart.filter(), barChart.filter())) {
+						dc.events.trigger(function () {
+							barChart.focus(timeChart.filter());
+						});
+					}
 				}
 			}
 			else if (chart==stateChart) {
