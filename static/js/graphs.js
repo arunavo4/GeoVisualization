@@ -284,9 +284,6 @@ function makeGraphs(error, recordsJson) {
 	}
 
 	function updateRange(start, end) {
-		timeChart
-			.x(d3.time.scale().domain([start, end]))
-			.rescale();
 		$('#inputdatestart').attr('readonly',true).val(formatDate(start));
 		$('#inputdateend').attr('readonly',true).val(formatDate(end));
 	}
@@ -563,6 +560,7 @@ function makeGraphs(error, recordsJson) {
 		 stateChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
+		
 		dcChart.on("filtered", function (chart, filter) {
 			// Get active layers before deleting them
 			var active = layerControl.getOverlays();
@@ -576,7 +574,13 @@ function makeGraphs(error, recordsJson) {
 						dc.events.trigger(function () {
 							barChart.focus(timeChart.filter());
 						});
+						console.log("Shit got filtered!");
 					}
+					updateRange(filter[0], filter[1]);
+				}else{
+					console.log("null filter on timeCHart1");
+					barChart.focus([minDate, maxDate]);
+					updateRange(minDate, maxDate);
 				}
 			}
 			else if (chart==stateChart) {
