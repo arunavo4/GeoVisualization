@@ -116,7 +116,7 @@ function makeGraphs(error, recordsJson) {
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
 		.brushOn(true)
-		.group(nonEmptyDate)
+		.group(numRecordsByDate)
 		.transitionDuration(500)
 		.x(d3.time.scale().domain([minDate, maxDate]))
 		.elasticY(true)
@@ -174,7 +174,7 @@ function makeGraphs(error, recordsJson) {
 
     stateChart
     	.width(200)
-		.height(545)
+		.height(620)
         .dimension(stateDim)
         .group(stateGroup)
         .ordering(function(d) { return -d.value })
