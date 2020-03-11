@@ -202,7 +202,7 @@ function makeGraphs(error, recordsJson) {
 
 	districtChart
     	.width(200)
-		.height(545)
+		.height(950)
         .dimension(districtDim)
         .group(nonEmptyDistrict)
 		.ordering(function(d) { return -d.value })

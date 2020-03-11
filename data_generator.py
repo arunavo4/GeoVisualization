@@ -12,11 +12,8 @@ files = glob('./static/data/Pictures/*.*')
 files = [path.split('\\')[-1] for path in files]
 
 # Random bunch of data
-phylum = ['Petalonamae ', ' Lophotrochozoa ', ' Lophotrochozoa ', ' Lophotrochozoa ', ' Lophotrochozoa ',
-          ' Lophotrochozoa ', ' Lophotrochozoa ', ' Deuterostome ', ' Deuterostome ', ' Deuterostome ',
-          ' Deuterostome ', ' Deuterostome ', ' Deuterostome ', ' Deuterostome ', ' Deuterostome ', ' Deuterostome ',
-          ' Chordate ', ' Chordate ', ' Chordate ', ' Chordate ', ' Echinoderm ', ' Echinoderm ', ' Echinoderm ',
-          ' Annelid ', ' Cnidaria ', ' Flatworm ', ' Arthropod ', ' Arthropod ', ' Arthropod']
+phylum = ['Petalonamae ', ' Lophotrochozoa ', ' Deuterostome ', ' Chordate ', ' Echinoderm ',
+          ' Annelid ', ' Cnidaria ', ' Flatworm ', ' Arthropod ', ]
 
 class_fauna = ['Anthozoa', 'Gastropoda','Bivalvia','Ascidiacea','Aves','Insecta','Mammalia','Reptilia',
                'Malacostraca','Scyphozoa','Holothuroidea','Cephalopoda','Amphibia','Hydrozoa','Demospongiae',
