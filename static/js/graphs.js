@@ -11,6 +11,7 @@ function makeGraphs(error, recordsJson) {
 		d["timestamp"] = dateFormat.parse(d["Date"]);
 		d["Longitude"] = +d["Longitude"];
 		d["Latitude"] = +d["Latitude"];
+		d["District"] = d["State"] + '_' + d["District"];
 	});
 
 	//Filter out non-empty bins
@@ -188,7 +189,8 @@ function makeGraphs(error, recordsJson) {
 		.height(545)
         .dimension(districtDim)
         .group(nonEmptyDistrict)
-        .ordering(function(d) { return -d.value })
+		.ordering(function(d) { return -d.value })
+		.label(function (d) { return String(d.key).split('_')[1]; })
         .colors(['#6baed6'])
         .elasticX(true)
 		.labelOffsetY(10)
@@ -319,6 +321,7 @@ function makeGraphs(error, recordsJson) {
 
 	var states_layer = {};
 	var districts_layer = {};
+	var state_district_map = {};
 
 	// Read geojson data
 	state_json.forEach(element => {
@@ -338,60 +341,96 @@ function makeGraphs(error, recordsJson) {
 				fillColor: fillColor
 			}
 		});
-		districts_layer[element.properties.NAME_2] = district;
+		districts_layer[element.properties.NAME_1 + '_' + element.properties.NAME_2] = district;
+		if (state_district_map[element.properties.NAME_1]==null) {
+			state_district_map[element.properties.NAME_1] = {};
+		}
+		state_district_map[element.properties.NAME_1][element.properties.NAME_1 + '_' + element.properties.NAME_2] = district;
 	});
 
 	var state_geojson = L.layerGroup(Object.values(states_layer));
 	var district_geojson = L.layerGroup(Object.values(districts_layer));
 
-	function reset_geojson() {
+	function reset_geojson_state() {
 		var states = Object.values(states_layer);
-		var districts = Object.values(districts_layer);
-		
 		state_geojson.clearLayers();
 		states.forEach(element => {
 			state_geojson.addLayer(element)
 		});
+		selected_states = [];
+	}
 
+	function reset_geojson_district() {
+		var districts = Object.values(districts_layer);
 		district_geojson.clearLayers();
 		districts.forEach(element => {
 			district_geojson.addLayer(element);
 		});
-	}
-	
-	function update_state_layer(state) {
-		state_geojson.clearLayers();
-		if(!selected_states.includes(state)){
-			selected_states.push(state);
-		}
-		else {
-			selected_states.pop(state);
-		}
-
-		if (selected_states.length==0) {
-			reset_geojson();
-		} else {
-			selected_states.forEach(element => {
-				state_geojson.addLayer(states_layer[element]);
-			});
-		}
+		selected_districts = [];
 	}
 
-	function update_district_layer(district) {
+	function reset_geojson() {
+		reset_geojson_state();
+		reset_geojson_district();
+	}
+
+	function reset_geojson_districts(districts){	
+		var new_districts = [];
+		districts.forEach(element => {
+			new_districts.push(element.key);
+		});
 		district_geojson.clearLayers();
+		new_districts.forEach(element => {
+			district_geojson.addLayer(districts_layer[element]);
+		});
+		selected_districts = [];
+	}
+
+	function update_district_layer(district, filter_select=false) {
+		if (selected_districts.length==0 && district_geojson.getLayers().length!=0) {
+			district_geojson.clearLayers();
+		}
+		// Check for filter selection
+		if (filter_select) {
+			district_geojson.clearLayers();
+			selected_districts = [];
+		}
 		if(!selected_districts.includes(district)){
 			selected_districts.push(district);
+			district_geojson.addLayer(districts_layer[district]);
 		}
 		else {
-			selected_districts.pop(district);
+			selected_districts = _.without(selected_districts, district);
+			district_geojson.removeLayer(districts_layer[district]);
 		}
 
 		if (selected_districts.length==0) {
-			reset_geojson();
-		} else {
-			selected_districts.forEach(element => {
-				district_geojson.addLayer(districts_layer[element]);
-			});
+			reset_geojson_district();
+		}
+	}
+	
+	function update_state_layer(state) { 
+		// Check if its first time 
+		if (selected_states.length==0 && state_geojson.getLayers().length!=0) {
+			state_geojson.clearLayers();
+		}
+		if(!selected_states.includes(state)){
+			selected_states.push(state);
+			state_geojson.addLayer(states_layer[state]);
+		}
+		else {
+			selected_states = _.without(selected_states, state);
+			state_geojson.removeLayer(states_layer[state]);
+		}
+
+		// Also update the corresponding districts 
+		var districts = state_district_map[state];
+		for(const dist_element in districts) {
+			update_district_layer(dist_element);
+		};
+
+		if (selected_states.length==0) {
+			reset_geojson_state();
 		}
 	}
 
@@ -560,25 +599,16 @@ function makeGraphs(error, recordsJson) {
 		 stateChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
-		
-		dcChart.on("filtered", function (chart, filter) {
-			// Get active layers before deleting them
-			var active = layerControl.getOverlays();
-
-			map.eachLayer(function (layer) {
-				map.removeLayer(layer)
-			});
+		dcChart.on("filtered", function (chart, filter) {			
 			if (chart==timeChart) {
 				if (filter!=null){
 					if (!rangesEqual(timeChart.filter(), barChart.filter())) {
 						dc.events.trigger(function () {
 							barChart.focus(timeChart.filter());
 						});
-						console.log("Shit got filtered!");
 					}
 					updateRange(filter[0], filter[1]);
 				}else{
-					console.log("null filter on timeCHart1");
 					barChart.focus([minDate, maxDate]);
 					updateRange(minDate, maxDate);
 				}
@@ -586,13 +616,28 @@ function makeGraphs(error, recordsJson) {
 			else if (chart==stateChart) {
 				if (filter!=null){
 					update_state_layer(filter);
+				}else{
+					reset_geojson_state();
 				}
 			}
 			else if (chart==districtChart) {
 				if (filter!=null){
-					update_district_layer(filter);
+					if (chart.filters().length==0) {
+						reset_geojson_districts(chart.group().all());						
+					}else{
+						update_district_layer(filter, chart.filters().length==1);
+					}
+				}else{
+					reset_geojson_district();
 				}
 			}
+			// Get active layers before deleting them
+			var active = layerControl.getOverlays();
+
+			map.eachLayer(function (layer) {
+				map.removeLayer(layer)
+			});
+
 			drawMap(active);
 			
 		});
