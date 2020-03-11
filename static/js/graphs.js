@@ -70,8 +70,9 @@ function makeGraphs(error, recordsJson) {
 
     //Charts
     var numberRecordsND = dc.numberDisplay("#number-records-nd");
-	var timeChart = dc.barChart("#time-chart");
 	var barChart = dc.barChart("#dynamic-bar-chart");
+	var timeChartSmall = dc.barChart("#time-chart-overview");
+	var timeChart = dc.barChart("#time-chart");
 	var entomofaunaChart = dc.rowChart("#entomofauna-row-chart");
 	var otherInvertebrateChart = dc.rowChart("#other-invertebrate-row-chart");
 	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
@@ -111,7 +112,7 @@ function makeGraphs(error, recordsJson) {
 		.valueAccessor(function(d){return d; })
 		.group(all);
 
-	timeChart
+	timeChartSmall
 		.width(1080)
 		.height(50)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
@@ -123,15 +124,30 @@ function makeGraphs(error, recordsJson) {
 		.elasticY(true)
 		.yAxis().ticks(4);
 
-	barChart
+	timeChart
 		.width(1080)
-		.height(138)
+		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
 		.brushOn(false)
 		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.day)
+		.xUnits(d3.time.day)
 		.group(numRecordsByDate)
+		.elasticY(true)
 		.transitionDuration(500);
+
+	barChart
+		.width(1080)
+		.height(140)
+		.margins({top: 10, right: 10, bottom: 20, left: 50})
+		.dimension(phylumDim)
+        .group(phylumGroup)
+		.colors(['#6baed6'])
+		.x(d3.scale.ordinal().domain(phylumDim)) 
+  		.xUnits(dc.units.ordinal)
+        .elasticY(true)
+        .yAxis().ticks(4);
 
 	entomofaunaChart
         .width(300)
@@ -175,7 +191,7 @@ function makeGraphs(error, recordsJson) {
 
     stateChart
     	.width(200)
-		.height(620)
+		.height(950)
         .dimension(stateDim)
         .group(stateGroup)
         .ordering(function(d) { return -d.value })
@@ -249,7 +265,7 @@ function makeGraphs(error, recordsJson) {
 				return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
 			});  
 		pieChart1.filterAll();dc.redrawAll();  
-	})
+	});
 
 	$('#dropdown-menu-2 a').on('click', function(){    
 		$('#toggle-2').html($(this).html() + '<span class="caret"></span>');   
@@ -262,7 +278,24 @@ function makeGraphs(error, recordsJson) {
 				return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
 			});  
 		pieChart2.filterAll();dc.redrawAll();   
-	})
+	});
+
+	$('#dropdown-menu-3 a').on('click', function(){    
+		$('#toggle-3').html($(this).html() + '<span class="caret"></span>');   
+		barChart
+			.width(1080)
+			.height(138)
+			.margins({top: 10, right: 10, bottom: 20, left: 50})
+			.dimension(key_map[$(this).text()].Dim)
+			.group(key_map[$(this).text()].Group)
+			.colors(['#6baed6'])
+			.x(d3.scale.ordinal().domain(key_map[$(this).text()].Dim)) 
+			.xUnits(dc.units.ordinal)
+			.elasticY(true)
+			.yAxis().ticks(4);
+		
+		barChart.elasticX(true).filterAll();dc.redrawAll();   
+	});
 
 	// $(function () {
 	// 	$('#dateStart').datetimepicker();
@@ -595,21 +628,21 @@ function makeGraphs(error, recordsJson) {
 	}
 
 	//Update the heatmap if any dc chart get filtered
-	dcCharts = [timeChart, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
-		 stateChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
+	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
+		 stateChart, timeChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {			
-			if (chart==timeChart) {
+			if (chart==timeChartSmall) {
 				if (filter!=null){
-					if (!rangesEqual(timeChart.filter(), barChart.filter())) {
+					if (!rangesEqual(timeChartSmall.filter(), timeChart.filter())) {
 						dc.events.trigger(function () {
-							barChart.focus(timeChart.filter());
+							timeChart.focus(timeChartSmall.filter());
 						});
 					}
 					updateRange(filter[0], filter[1]);
 				}else{
-					barChart.focus([minDate, maxDate]);
+					timeChart.focus([minDate, maxDate]);
 					updateRange(minDate, maxDate);
 				}
 			}

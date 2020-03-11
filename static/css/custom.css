@@ -5,7 +5,7 @@
 }
 
 /* Hide the y axis */
-#time-chart svg g g.axis.y { display: none; }
+#time-chart-overview svg g g.axis.y { display: none; }
 
 .nav-tabs{
     padding-top: 4px;
