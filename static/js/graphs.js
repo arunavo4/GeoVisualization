@@ -87,23 +87,23 @@ function makeGraphs(error, recordsJson) {
 	var key_map = {
 		Phylum: {
 			Dim: phylumDim,
-			Group: phylumGroup
+			Group: remove_empty_bins(phylumGroup)
 		},
 		Class: {
 			Dim: classDim,
-			Group: classGroup
+			Group: remove_empty_bins(classGroup)
 		},
 		Order: {
 			Dim: orderDim,
-			Group: orderGroup
+			Group: remove_empty_bins(orderGroup)
 		},
 		Family: {
 			Dim: familyDim,
-			Group: familyGroup
+			Group: remove_empty_bins(familyGroup)
 		},
 		Genus: {
 			Dim: genusDim,
-			Group: genusGroup
+			Group: remove_empty_bins(genusGroup)
 		}
 	};
 
@@ -133,18 +133,19 @@ function makeGraphs(error, recordsJson) {
 		.x(d3.time.scale().domain([minDate, maxDate]))
 		.round(d3.time.day)
 		.xUnits(d3.time.day)
-		.group(numRecordsByDate)
+		.group(nonEmptyDate)
 		.elasticY(true)
-		.transitionDuration(500);
+		.transitionDuration(500)
+		.yAxis().ticks(4);
 
 	barChart
 		.width(1080)
 		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 50})
-		.dimension(phylumDim)
-        .group(phylumGroup)
+		.dimension(key_map["Phylum"].Dim)
+        .group(key_map['Phylum'].Group)
 		.colors(['#6baed6'])
-		.x(d3.scale.ordinal().domain(phylumDim)) 
+		.x(d3.scale.ordinal().domain(key_map["Phylum"].Dim)) 
   		.xUnits(dc.units.ordinal)
         .elasticY(true)
         .yAxis().ticks(4);
@@ -283,18 +284,19 @@ function makeGraphs(error, recordsJson) {
 	$('#dropdown-menu-3 a').on('click', function(){    
 		$('#toggle-3').html($(this).html() + '<span class="caret"></span>');   
 		barChart
-			.width(1080)
-			.height(138)
-			.margins({top: 10, right: 10, bottom: 20, left: 50})
-			.dimension(key_map[$(this).text()].Dim)
-			.group(key_map[$(this).text()].Group)
-			.colors(['#6baed6'])
-			.x(d3.scale.ordinal().domain(key_map[$(this).text()].Dim)) 
-			.xUnits(dc.units.ordinal)
-			.elasticY(true)
-			.yAxis().ticks(4);
+		.dimension(key_map[$(this).text()].Dim)
+		.group(key_map[$(this).text()].Group)
+		.x(d3.scale.ordinal().domain(key_map[$(this).text()].Dim)) 
+		.xUnits(dc.units.ordinal)
+		.elasticX(true);
+		var focus_keys = [];
 		
-		barChart.elasticX(true).filterAll();dc.redrawAll();   
+		key_map[$(this).text()].Group.all().forEach(element => {
+			focus_keys.push(element.key);
+		});
+		
+		barChart.focus(focus_keys);
+		barChart.filterAll(); dc.redrawAll();    
 	});
 
 	// $(function () {
@@ -620,8 +622,7 @@ function makeGraphs(error, recordsJson) {
         else if (range1.length === 0 && range2.length === 0) {
             return true;
         }
-        else if (range1[0].valueOf() === range2[0].valueOf() &&
-            range1[1].valueOf() === range2[1].valueOf()) {
+        else if (range1[0].valueOf() === range2[0].valueOf() && range1[1].valueOf() === range2[1].valueOf()) {
             return true;
         }
         return false;
@@ -629,7 +630,7 @@ function makeGraphs(error, recordsJson) {
 
 	//Update the heatmap if any dc chart get filtered
 	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
-		 stateChart, timeChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
+		 stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {			
