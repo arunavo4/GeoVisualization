@@ -72,7 +72,7 @@ function makeGraphs(error, recordsJson) {
     var numberRecordsND = dc.numberDisplay("#number-records-nd");
 	var barChart = dc.barChart("#dynamic-bar-chart");
 	var timeChartSmall = dc.barChart("#time-chart-overview");
-	var timeChart = dc.barChart("#time-chart");
+	var timeChart = dc.lineChart("#time-chart");
 	var entomofaunaChart = dc.rowChart("#entomofauna-row-chart");
 	var otherInvertebrateChart = dc.rowChart("#other-invertebrate-row-chart");
 	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
@@ -129,14 +129,16 @@ function makeGraphs(error, recordsJson) {
 		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
+		.renderArea(true)				// for area
 		.brushOn(false)
 		.x(d3.time.scale().domain([minDate, maxDate]))
-		.round(d3.time.day)
-		.xUnits(d3.time.day)
 		.group(nonEmptyDate)
 		.elasticY(true)
 		.transitionDuration(500)
 		.yAxis().ticks(4);
+
+		// .round(d3.time.day)
+		// .xUnits(d3.time.day)
 
 	barChart
 		.width(1080)
