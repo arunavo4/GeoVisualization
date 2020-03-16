@@ -226,10 +226,10 @@ function makeGraphs(error, recordsJson) {
 			.height(X*N + gap*(N+1))
 		*/
 		var N = chart.group().all().length;
-		console.log(N);
 		var width = 15, gap = 5;
+		var height = width*N + gap*(N+1);
 		chart
-			.height(width*N + gap*(N+1))
+			.height((height > 950) ? height : 950)
 			.render();
 	}
 	
