@@ -132,7 +132,7 @@ function makeGraphs(error, recordsJson) {
 		.renderArea(true)				// for area
 		.brushOn(false)
 		.x(d3.time.scale().domain([minDate, maxDate]))
-		.group(nonEmptyDate)
+		.group(numRecordsByDate)
 		.elasticY(true)
 		.transitionDuration(500)
 		.yAxis().ticks(4);
@@ -149,8 +149,12 @@ function makeGraphs(error, recordsJson) {
 		.colors(['#6baed6'])
 		.x(d3.scale.ordinal().domain(key_map["Phylum"].Dim)) 
   		.xUnits(dc.units.ordinal)
-        .elasticY(true)
-        .yAxis().ticks(4);
+		.elasticY(true)
+		.xAxisLabel('Categories')
+		.yAxis().ticks(4);
+	
+	barChart
+		.xAxis().tickValues([]);
 
 	entomofaunaChart
         .width(300)
@@ -205,7 +209,6 @@ function makeGraphs(error, recordsJson) {
 
 	districtChart
     	.width(200)
-		.height(950)
         .dimension(districtDim)
         .group(nonEmptyDistrict)
 		.ordering(function(d) { return -d.value })
@@ -214,6 +217,23 @@ function makeGraphs(error, recordsJson) {
         .elasticX(true)
 		.labelOffsetY(10)
 		.xAxis().ticks(4);
+
+	function updateChartHeight(chart) {
+		/*
+			so the proper height is easy to calculate (but you must pass the gap value, which has 5 by default).
+			Assuming N=chart.group().all().length, then do:
+			.fixedBarHeight(X)
+			.height(X*N + gap*(N+1))
+		*/
+		var N = chart.group().all().length;
+		console.log(N);
+		var width = 15, gap = 5;
+		chart
+			.height(width*N + gap*(N+1))
+			.render();
+	}
+	
+	updateChartHeight(districtChart);	
 		
 	temperatureChart
 		.width(350)
@@ -284,16 +304,17 @@ function makeGraphs(error, recordsJson) {
 	});
 
 	$('#dropdown-menu-3 a').on('click', function(){    
-		$('#toggle-3').html($(this).html() + '<span class="caret"></span>');   
+		$('#toggle-3').html($(this).html() + '<span class="caret"></span>'); 
+		var label = $(this).text();  
 		barChart
-		.dimension(key_map[$(this).text()].Dim)
-		.group(key_map[$(this).text()].Group)
-		.x(d3.scale.ordinal().domain(key_map[$(this).text()].Dim)) 
+		.dimension(key_map[label].Dim)
+		.group(key_map[label].Group)
+		.x(d3.scale.ordinal().domain(key_map[label].Dim)) 
 		.xUnits(dc.units.ordinal)
 		.elasticX(true);
 		var focus_keys = [];
-		
-		key_map[$(this).text()].Group.all().forEach(element => {
+		// .xAxisLabel(label)
+		key_map[label].Group.all().forEach(element => {
 			focus_keys.push(element.key);
 		});
 		
@@ -302,16 +323,19 @@ function makeGraphs(error, recordsJson) {
 	});
 
 	// $(function () {
-	// 	$('#dateStart').datetimepicker();
-	// 	$('#dateEnd').datetimepicker({
-	// 		useCurrent: false //Important! See issue #1075
-	// 	});
-	// 	$("#dateStart").on("dp.change", function (e) {
-	// 		$('#dateEnd').data("DateTimePicker").minDate(e.date);
-	// 	});
-	// 	$("#dateEnd").on("dp.change", function (e) {
-	// 		$('#dateStart').data("DateTimePicker").maxDate(e.date);
-	// 	});
+	// 	$('inputdatestart').datepicker({format: "dd/mm/yyyy"}); 
+	// 	$('inputdateend').datepicker({format: "dd/mm/yyyy"}); 
+
+	// 	// $('#datetimepicker6').datetimepicker();
+    //     // $('#datetimepicker7').datetimepicker({
+    //     //     useCurrent: false //Important! See issue #1075
+    //     // });
+    //     // $("#datetimepicker6").on("dp.change", function (e) {
+    //     //     $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+    //     // });
+    //     // $("#datetimepicker7").on("dp.change", function (e) {
+    //     //     $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+    //     // });
 	// });
 
 	function formatDate(date) {
@@ -322,9 +346,9 @@ function makeGraphs(error, recordsJson) {
 		return day + '/' + monthIndex + '/' + year;
 	}
 
-	function updateRange(start, end) {
-		$('#inputdatestart').attr('readonly',true).val(formatDate(start));
-		$('#inputdateend').attr('readonly',true).val(formatDate(end));
+	function updateRange(start, end, readonly=true) {
+		$('#inputdatestart').attr('readonly', readonly).val(formatDate(start));
+		$('#inputdateend').attr('readonly', readonly).val(formatDate(end));
 	}
 
 	updateRange(minDate, maxDate);
@@ -634,6 +658,11 @@ function makeGraphs(error, recordsJson) {
 	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
 		 stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
+	/* Turn off resizing for now */
+	// _.each(dcCharts, function (dcChart) {
+	// 	apply_resizing(dcChart, 20);
+	// });
+
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {			
 			if (chart==timeChartSmall) {
@@ -655,6 +684,7 @@ function makeGraphs(error, recordsJson) {
 				}else{
 					reset_geojson_state();
 				}
+				updateChartHeight(districtChart);
 			}
 			else if (chart==districtChart) {
 				if (filter!=null){

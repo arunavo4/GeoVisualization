@@ -1,7 +1,7 @@
 #number-records-nd {
     font-size: 24px;
     width: auto;
-    height: 20px;
+    height: auto;
 }
 
 /* Hide the y axis */
@@ -27,7 +27,7 @@
     padding: 2px 6px;
 }
 
-#therow{
+.therow{
     height: 30px;
     margin: 0px 0px 0px 0px;
 }
