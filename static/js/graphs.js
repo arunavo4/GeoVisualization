@@ -340,11 +340,10 @@ function makeGraphs(error, recordsJson) {
 		// .xAxisLabel(label)
 		key_map[label].Group.all().forEach(element => {
 			focus_keys.push(element.key);
-		});
-		barChart.render();
-		
+		});		
 		barChart.focus(focus_keys);
 		barChart.filterAll(); dc.redrawAll();   
+		barChart.render();
 	});
 
 	// $(function () {
