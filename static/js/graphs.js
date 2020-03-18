@@ -151,7 +151,30 @@ function makeGraphs(error, recordsJson) {
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
 		.yAxis().ticks(4);
-	
+
+	barChart.on("postRender", function(chart) {
+		chart.select('.axis.x')
+				.attr("text-anchor", "end")
+				.selectAll("text")
+				.attr("transform", "rotate(-90)")
+				.attr("dy", "-0.7em")
+				.attr("dx", "+5em");
+		});
+
+	/*  Turn this part on to avoid the jump */
+
+	// barChart.on('pretransition', function(chart) {
+	// 	chart.select('.axis.x')
+	// 		// create stuff
+	// 		.transition().duration(chart.transitionDuration())
+	// 		// change stuff
+	// 		.attr("text-anchor", "end")
+	// 		.selectAll("text")
+	// 		.attr("transform", "rotate(-90)")
+	// 		.attr("dy", "-0.7em")
+	// 		.attr("dx", "+4em");
+	// });
+
 		// .xAxisLabel('Categories')
 
 	// barChart
@@ -318,9 +341,10 @@ function makeGraphs(error, recordsJson) {
 		key_map[label].Group.all().forEach(element => {
 			focus_keys.push(element.key);
 		});
+		barChart.render();
 		
 		barChart.focus(focus_keys);
-		barChart.filterAll(); dc.redrawAll();    
+		barChart.filterAll(); dc.redrawAll();   
 	});
 
 	// $(function () {
