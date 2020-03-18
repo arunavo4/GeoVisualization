@@ -150,11 +150,12 @@ function makeGraphs(error, recordsJson) {
 		.x(d3.scale.ordinal().domain(key_map["Phylum"].Dim)) 
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
-		.xAxisLabel('Categories')
 		.yAxis().ticks(4);
 	
-	barChart
-		.xAxis().tickValues([]);
+		// .xAxisLabel('Categories')
+
+	// barChart
+	// 	.xAxis().tickValues([]);
 
 	entomofaunaChart
         .width(300)
@@ -218,7 +219,7 @@ function makeGraphs(error, recordsJson) {
 		.labelOffsetY(10)
 		.xAxis().ticks(4);
 
-	function updateChartHeight(chart) {
+	function updateChartHeight(chart, minHeight) {
 		/*
 			so the proper height is easy to calculate (but you must pass the gap value, which has 5 by default).
 			Assuming N=chart.group().all().length, then do:
@@ -229,11 +230,11 @@ function makeGraphs(error, recordsJson) {
 		var width = 15, gap = 5;
 		var height = width*N + gap*(N+1);
 		chart
-			.height((height > 950) ? height : 950)
+			.height((height > minHeight) ? height : minHeight)
 			.render();
 	}
 	
-	updateChartHeight(districtChart);	
+	updateChartHeight(districtChart, 950);	
 		
 	temperatureChart
 		.width(350)
@@ -684,7 +685,7 @@ function makeGraphs(error, recordsJson) {
 				}else{
 					reset_geojson_state();
 				}
-				updateChartHeight(districtChart);
+				updateChartHeight(districtChart, 950);
 			}
 			else if (chart==districtChart) {
 				if (filter!=null){
