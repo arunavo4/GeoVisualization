@@ -362,6 +362,15 @@ function makeGraphs(error, recordsJson) {
     //     // });
 	// });
 
+	$(function(){
+		var games = ["Baseball","Tennis","Golf","Cricket","Football","Hockey","Badminton","Volleyball","Boxing","Kabaddi","Chess","Long Jump","High Jump","Racing","Handball","Swimming","Wrestling"];
+		
+		$("#search").autocomplete({
+		source: games
+		});
+		
+		});
+
 	function formatDate(date) {
 		var day = date.getDate();
 		var monthIndex = date.getMonth() + 1;
@@ -531,13 +540,13 @@ function makeGraphs(error, recordsJson) {
 		layers: [OpenStreetMap, markers]
 	});
 
-	var controlSearch = new L.Control.Search({
-		position: 'topright',
-		layer: markers,
-		initial: false,
-		zoom: 18,
-		marker: false
-	});
+	// var controlSearch = new L.Control.Search({
+	// 	position: 'topright',
+	// 	layer: markers,
+	// 	initial: false,
+	// 	zoom: 18,
+	// 	marker: false
+	// });
 
 	
 	// Add method to layer control class
@@ -643,19 +652,19 @@ function makeGraphs(error, recordsJson) {
 			}
 		}
 
-		controlSearch.on('search:locationfound', function (e) {
-            if (e.layer._popup) {
-                var index = markerList.map(function (e) {
-                    return e.options.title;
-                }).indexOf(e.text);
-                var m = markerList[index];
-                markers.zoomToShowLayer(m, function () {
-                    m.openPopup();
-                    m.bounce(3);
-                });
-            }
-        });
-		map.addControl(controlSearch);
+		// controlSearch.on('search:locationfound', function (e) {
+        //     if (e.layer._popup) {
+        //         var index = markerList.map(function (e) {
+        //             return e.options.title;
+        //         }).indexOf(e.text);
+        //         var m = markerList[index];
+        //         markers.zoomToShowLayer(m, function () {
+        //             m.openPopup();
+        //             m.bounce(3);
+        //         });
+        //     }
+        // });
+		// map.addControl(controlSearch);
 	};
 
 	//Draw Map

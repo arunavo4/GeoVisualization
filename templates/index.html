@@ -2,8 +2,11 @@
 <html>
 <head>
   <title>GeoVis Dashboard</title>
-  <link rel="stylesheet" href="./static/css/bootstrap-datetimepicker.min.css">
   <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./static/css/bootstrap-datetimepicker.min.css">
+  <link rel="stylesheet" href="./static/css/jquery-ui.min.css">
+  <link rel="stylesheet" href="./static/css/jquery-ui.structure.min.css">
+  <link rel="stylesheet" href="./static/css/jquery-ui.theme.min.css">
   <link rel="stylesheet" href="./static/css/keen-dashboards.css">
   <link rel="stylesheet" href="./static/css/dc.min.css">
   <link rel="stylesheet" href="./static/css/dc-resizing.css">
@@ -21,12 +24,33 @@
 
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="./">GeoVis - A Visualization and Analysis Tool for GeoFauna</a>
-      </div>
-      <div class="nav navbar-nav navbar-right">
-        <a href="https://www.isro.gov.in/" target="_blank"><img class="logo" src="./static\css\images\isro-logo@2x.png" alt="ISRO-LOGO"></a>
-        <a href="https://zsi.gov.in/" target="_blank"><img class="logo" src="./static\css\images\zsi-logo@2x.png" alt="ZSI-LOGO"></a>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="./">GeoVis - A Visualization and Analysis Tool for GeoFauna</a>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          
+            <div class="row">
+              <div class="col-sm-8">
+                <div class="nav navbar-nav navbar-right">
+                  <div class="input-group" style="padding-top: 10px; padding-bottom: 10px;">
+                    <input type="text" class="form-control" id="search">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">Search</button>
+                    </span>
+                  </div><!-- /input-group -->
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="nav navbar-nav navbar-right">
+                  <a href="https://www.isro.gov.in/" target="_blank"><img class="logo" src="./static\css\images\isro-logo@2x.png" alt="ISRO-LOGO"></a>
+                  <a href="https://zsi.gov.in/" target="_blank"><img class="logo" src="./static\css\images\zsi-logo@2x.png" alt="ZSI-LOGO"></a>
+                </div>
+              </div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
@@ -455,6 +479,7 @@
 </p>
   <script src="./static/js/geojson.js" type="text/javascript"></script>
   <script src="./static/js/jquery.min.js"></script>
+  <script src="./static/js/jquery-ui.min.js"></script>
   <script src="./static/js/moment.min.js"></script>
   <script src="./static/js/bootstrap.min.js"></script>
   <script src="./static/js/bootstrap-datetimepicker.min.js"></script>
