@@ -122,6 +122,7 @@ def main():
         data['Vertebrate'] = rand.choice(['Yes', 'No'])
         data['Temperature'] = rand.randint(5, 50)
         data['Humidity'] = rand.randint(45, 75)
+        data['Collector'] = "Arunavo Ray"
 
         data['ImageAnimal'] = rand.choice(files)
         data['ImageHabitat'] = rand.choice(files)

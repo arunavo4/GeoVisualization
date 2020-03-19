@@ -7,6 +7,13 @@
 /* Hide the y axis */
 #time-chart-overview svg g g.axis.y { display: none; }
 
+.ui-autocomplete { 
+    position: absolute;
+    cursor: default;
+    z-index:2000 !important;
+    max-height: 200px; overflow-y: scroll; overflow-x: hidden;
+    }  
+
 .nav-tabs{
     padding-top: 4px;
     padding-left: 10px;

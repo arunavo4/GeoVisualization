@@ -36,9 +36,26 @@
               <div class="col-sm-8">
                 <div class="nav navbar-nav navbar-right">
                   <div class="input-group" style="padding-top: 10px; padding-bottom: 10px;">
+                    <!-- Single button Dropdown-->
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default dropdown-toggle" id="toggle-nav" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Phylum <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" id="dropdown-menu-nav">
+                        <li><a>Phylum</a></li>
+                        <li><a>Class</a></li>
+                        <li><a>Order</a></li>
+                        <li><a>Family</a></li>
+                        <li><a>Genus</a></li>
+                        <li><a>State</a></li>
+                        <li><a>District</a></li>
+                        <li><a>Habitat</a></li>
+                      </ul>
+                    </div>
+                    <!-- Single button Dropdown-->
                     <input type="text" class="form-control" id="search">
                     <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">Search</button>
+                      <button class="btn btn-default" type="button" id="filter">Filter</button>
                     </span>
                   </div><!-- /input-group -->
                 </div>

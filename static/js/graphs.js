@@ -72,7 +72,7 @@ function makeGraphs(error, recordsJson) {
     var numberRecordsND = dc.numberDisplay("#number-records-nd");
 	var barChart = dc.barChart("#dynamic-bar-chart");
 	var timeChartSmall = dc.barChart("#time-chart-overview");
-	var timeChart = dc.lineChart("#time-chart");
+	var timeChart = dc.barChart("#time-chart");
 	var entomofaunaChart = dc.rowChart("#entomofauna-row-chart");
 	var otherInvertebrateChart = dc.rowChart("#other-invertebrate-row-chart");
 	var vertebrateChart = dc.rowChart("#vertebrate-row-chart");
@@ -87,24 +87,36 @@ function makeGraphs(error, recordsJson) {
 	var key_map = {
 		Phylum: {
 			Dim: phylumDim,
-			Group: remove_empty_bins(phylumGroup)
+			Group: phylumGroup
 		},
 		Class: {
 			Dim: classDim,
-			Group: remove_empty_bins(classGroup)
+			Group: classGroup
 		},
 		Order: {
 			Dim: orderDim,
-			Group: remove_empty_bins(orderGroup)
+			Group: orderGroup
 		},
 		Family: {
 			Dim: familyDim,
-			Group: remove_empty_bins(familyGroup)
+			Group: familyGroup
 		},
 		Genus: {
 			Dim: genusDim,
-			Group: remove_empty_bins(genusGroup)
-		}
+			Group: genusGroup
+		},
+		State : {
+			Dim: stateDim,
+			Group: stateGroup
+		},
+		District : {
+			Dim: districtDim,
+			Group: districtGroup
+		},
+		Habitat : {
+			Dim: habitatDim,
+			Group: habitatGroup
+		},
 	};
 
 	numberRecordsND
@@ -129,7 +141,7 @@ function makeGraphs(error, recordsJson) {
 		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
-		.renderArea(true)				// for area
+		// .renderArea(true)				// for area
 		.brushOn(false)
 		.x(d3.time.scale().domain([minDate, maxDate]))
 		.group(numRecordsByDate)
@@ -256,6 +268,14 @@ function makeGraphs(error, recordsJson) {
 			.height((height > minHeight) ? height : minHeight)
 			.render();
 	}
+
+	function getKeys(group) {
+		var array = []
+		group.all().forEach(element =>{
+			array.push(element.key);
+		});
+		return array;
+	}
 	
 	updateChartHeight(districtChart, 950);	
 		
@@ -302,7 +322,7 @@ function makeGraphs(error, recordsJson) {
 		});
 
 	$('#dropdown-menu-1 a').on('click', function(){    
-		$('#toggle-1').html($(this).html() + '<span class="caret"></span>');
+		$('#toggle-1').html($(this).html() + ' <span class="caret"></span>');
 		pieChart1
 			.width(310)
 			.height(178)
@@ -315,7 +335,7 @@ function makeGraphs(error, recordsJson) {
 	});
 
 	$('#dropdown-menu-2 a').on('click', function(){    
-		$('#toggle-2').html($(this).html() + '<span class="caret"></span>');   
+		$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');   
 		pieChart2
 			.width(310)
 			.height(178)
@@ -328,20 +348,16 @@ function makeGraphs(error, recordsJson) {
 	});
 
 	$('#dropdown-menu-3 a').on('click', function(){    
-		$('#toggle-3').html($(this).html() + '<span class="caret"></span>'); 
+		$('#toggle-3').html($(this).html() + ' <span class="caret"></span>'); 
 		var label = $(this).text();  
 		barChart
 		.dimension(key_map[label].Dim)
 		.group(key_map[label].Group)
-		.x(d3.scale.ordinal().domain(key_map[label].Dim)) 
+		.x(d3.scale.ordinal().domain(key_map[label].Dim))
 		.xUnits(dc.units.ordinal)
 		.elasticX(true);
-		var focus_keys = [];
 		// .xAxisLabel(label)
-		key_map[label].Group.all().forEach(element => {
-			focus_keys.push(element.key);
-		});		
-		barChart.focus(focus_keys);
+		barChart.focus(getKeys(key_map[label].Group));
 		barChart.filterAll(); dc.redrawAll();   
 		barChart.render();
 	});
@@ -362,14 +378,55 @@ function makeGraphs(error, recordsJson) {
     //     // });
 	// });
 
+	/*
+		> Collect data from all the groups
+			_each.group.all()	| [State, District, Habitat, Phylum, Class, Order, Family, Genus]
+		> seperate all values to search from 
+		> now create a map of values to groups/chart
+		> depending on the selected filter --> filter the respective chart
+	*/
+
+	var autocomplete_keys = [];
+	var group_key = "Phylum";
+	autocomplete_keys = getKeys(phylumGroup);
+
+	$('#dropdown-menu-nav a').on('click', function(){    
+		$('#toggle-nav').html($(this).html() + ' <span class="caret"></span>'); 
+		// Fill up array 
+		group_key = $(this).text();
+		autocomplete_keys = getKeys(key_map[$(this).text()].Group);
+		console.log(autocomplete_keys);
+		$( "#search" ).autocomplete('option', 'source', autocomplete_keys)
+	});
+
+	function filterGroup(Dim, Key) {
+		Dim.filter(function(d) {return d === Key});
+	}
+
+	$('#filter').on('click', function(){ 
+		let term = $('#search').data('uiAutocomplete').term;
+		console.log("Term--->"+ term);
+		//check if it is not null and matches the keys then filter 
+		if (term!=null && (term in autocomplete_keys)) {
+			console.log("Filter-->"+ term);
+			filterGroup(key_map[group_key].Dim, term);
+		} 
+	});
+
 	$(function(){
-		var games = ["Baseball","Tennis","Golf","Cricket","Football","Hockey","Badminton","Volleyball","Boxing","Kabaddi","Chess","Long Jump","High Jump","Racing","Handball","Swimming","Wrestling"];
+		console.log(autocomplete_keys);
 		
 		$("#search").autocomplete({
-		source: games
+			source: autocomplete_keys,
+			deferRequestBy: 100, // This is to avoid js error on fast typing
+			select: function (event, ui) {
+				var label = ui.item.label;
+				console.log(label);
+				filterGroup(key_map[group_key].Dim, label);
+			}
 		});
 		
-		});
+	});
 
 	function formatDate(date) {
 		var day = date.getDate();
