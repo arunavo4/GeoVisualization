@@ -401,6 +401,7 @@ function makeGraphs(error, recordsJson) {
 
 	function filterGroup(Dim, Key) {
 		Dim.filter(function(d) {return d === Key});
+		dc.renderAll();
 	}
 
 	$('#filter').on('click', function(){ 
@@ -582,6 +583,7 @@ function makeGraphs(error, recordsJson) {
 
 		if (selected_states.length==0) {
 			reset_geojson_state();
+			reset_geojson_district();
 		}
 	}
 
@@ -597,13 +599,13 @@ function makeGraphs(error, recordsJson) {
 		layers: [OpenStreetMap, markers]
 	});
 
-	// var controlSearch = new L.Control.Search({
-	// 	position: 'topright',
-	// 	layer: markers,
-	// 	initial: false,
-	// 	zoom: 18,
-	// 	marker: false
-	// });
+	var controlSearch = new L.Control.Search({
+		position: 'topright',
+		layer: markers,
+		initial: false,
+		zoom: 18,
+		marker: false
+	});
 
 	
 	// Add method to layer control class
@@ -709,19 +711,19 @@ function makeGraphs(error, recordsJson) {
 			}
 		}
 
-		// controlSearch.on('search:locationfound', function (e) {
-        //     if (e.layer._popup) {
-        //         var index = markerList.map(function (e) {
-        //             return e.options.title;
-        //         }).indexOf(e.text);
-        //         var m = markerList[index];
-        //         markers.zoomToShowLayer(m, function () {
-        //             m.openPopup();
-        //             m.bounce(3);
-        //         });
-        //     }
-        // });
-		// map.addControl(controlSearch);
+		controlSearch.on('search:locationfound', function (e) {
+            if (e.layer._popup) {
+                var index = markerList.map(function (e) {
+                    return e.options.title;
+                }).indexOf(e.text);
+                var m = markerList[index];
+                markers.zoomToShowLayer(m, function () {
+                    m.openPopup();
+                    m.bounce(3);
+                });
+            }
+        });
+		map.addControl(controlSearch);
 	};
 
 	//Draw Map
@@ -773,6 +775,7 @@ function makeGraphs(error, recordsJson) {
 					update_state_layer(filter);
 				}else{
 					reset_geojson_state();
+					reset_geojson_district();
 				}
 				updateChartHeight(districtChart, 950);
 			}
