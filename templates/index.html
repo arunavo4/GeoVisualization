@@ -2,22 +2,22 @@
 <html>
 <head>
   <title>GeoVis Dashboard</title>
-  <link rel="stylesheet" href="./static/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./static/css/bootstrap-datetimepicker.min.css">
-  <link rel="stylesheet" href="./static/css/jquery-ui.min.css">
-  <link rel="stylesheet" href="./static/css/jquery-ui.structure.min.css">
-  <link rel="stylesheet" href="./static/css/jquery-ui.theme.min.css">
-  <link rel="stylesheet" href="./static/css/keen-dashboards.css">
-  <link rel="stylesheet" href="./static/css/dc.min.css">
-  <link rel="stylesheet" href="./static/css/dc-resizing.css">
-  <link rel="stylesheet" href="./static/css/leaflet.css">
-  <link rel="stylesheet" href="./static/css/custom.css">
-  <link rel="stylesheet" href="./static/css/screen.css"/>
-  <link rel="stylesheet" href="./static/css/MarkerCluster.css"/>
-  <link rel="stylesheet" href="./static/css/MarkerCluster.Default.css"/>
-  <link rel="stylesheet" href="./static/css/leaflet-search.min.css"/>
-  <link rel="stylesheet" href="./static/css/L.Control.Locate.min.css"/>
-  <link rel="stylesheet" href="static/css/L.Control.Sidebar.css" />
+  <link rel="stylesheet" href="./static/css/bootstrap.min.css"  crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/bootstrap-datetimepicker.min.css"  crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/jquery-ui.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/jquery-ui.structure.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/jquery-ui.theme.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/keen-dashboards.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/dc.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/dc-resizing.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/leaflet.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/custom.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/screen.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/MarkerCluster.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/MarkerCluster.Default.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/leaflet-search.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="./static/css/L.Control.Locate.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/css/L.Control.Sidebar.css" crossorigin="anonymous">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body class="application">
@@ -33,7 +33,7 @@
         <div class="col-sm-6">
           
             <div class="row">
-              <div class="col-sm-8">
+              <div class="col-sm-6">
                 <div class="nav navbar-nav navbar-right">
                   <div class="input-group" style="padding-top: 10px; padding-bottom: 10px;">
                     <!-- Single button Dropdown-->
@@ -60,13 +60,44 @@
                   </div><!-- /input-group -->
                 </div>
               </div>
-              <div class="col-sm-4">
+              
+              <div class="col-sm-6">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reportModal" style="margin-top: 10px; margin-bottom: 10px;">
+                  Generate Report
+                </button>
                 <div class="nav navbar-nav navbar-right">
                   <a href="https://www.isro.gov.in/" target="_blank"><img class="logo" src="./static\css\images\isro-logo@2x.png" alt="ISRO-LOGO"></a>
                   <a href="https://zsi.gov.in/" target="_blank"><img class="logo" src="./static\css\images\zsi-logo@2x.png" alt="ZSI-LOGO"></a>
                 </div>
               </div>
             </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h5 class="modal-title" id="reportModalLabel">Generate Report</h5>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon3">Report Title</span>
+            <input type="text" class="form-control" id="reportTitle" placeholder="Title" aria-describedby="basic-addon3">
+          </div>
+          <label class="checkbox-inline" style="margin-top: 10px; margin-bottom: 10px; margin-left: 10px;">
+            <input type="checkbox" value="" >Include Data Tables
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="printReport">Print Report</button>
         </div>
       </div>
     </div>
@@ -157,12 +188,12 @@
                   <!-- Tab-content -->
                   <div class="tab-content">
                     <div id="tab1" class="tab-pane fade in active">
-                      <div class="chart-stage">
+                      <div class="chart-stage" id="state-stage">
                         <div id="state-row-chart"></div>
                       </div>
                     </div>
                     <div id="tab2" class="tab-pane fade">
-                      <div class="chart-stage">
+                      <div class="chart-stage" id="district-stage">
                         <div id="district-row-chart" style="overflow-y: auto; height: 950px;"></div>
                       </div>
                     </div>
@@ -185,7 +216,7 @@
                   Map
                   <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
                 </div>
-                <div class="chart-stage">
+                <div class="chart-stage" id="map-stage">
                   <div id="map" style="width: auto; height: 520px"></div>
                 </div>
               </div>
@@ -244,7 +275,7 @@
                     <!-- The date area -->
                   </div>
                 </div>
-                <div class="chart-stage">
+                <div class="chart-stage" id="timeline-stage">
                   <div class="chart-stage">
                     <div id="dynamic-bar-chart"></div>
                   </div>
@@ -282,7 +313,7 @@
                 </a>
               </span>
             </div>
-            <div class="chart-stage">
+            <div class="chart-stage" id="habitat-stage">
               <div id="habitat-row-chart"></div>
             </div>
           </div>
@@ -375,7 +406,7 @@
                       </a>
                     </span>
                   </div>
-                  <div class="chart-stage">
+                  <div class="chart-stage" id="temp-stage">
                     <div id="temperature-bar-chart"></div>
                   </div>
                 </div>
@@ -397,7 +428,7 @@
                       </a>
                     </span>
                   </div>
-                  <div class="chart-stage">
+                  <div class="chart-stage" id="humidity-stage">
                     <div id="humidity-bar-chart"></div>
                   </div>
                 </div>
@@ -436,7 +467,7 @@
                       </a>
                     </span>
                   </div>
-                  <div class="chart-stage">
+                  <div class="chart-stage" id="pie-1-stage">
                     <div id="dynamic-pie-chart-1"></div>
                   </div>
                 </div>
@@ -471,7 +502,7 @@
                       </a>
                     </span>
                   </div>
-                  <div class="chart-stage">
+                  <div class="chart-stage" id="pie-2-stage">
                     <div id="dynamic-pie-chart-2"></div>
                   </div>
                 </div>
@@ -515,6 +546,9 @@
   <script src="./static/js/L.Control.Locate.min.js"></script>
   <script src="./static/js/Control.FullScreen.js"></script>
   <script src="static/js/L.Control.Sidebar.js"></script>
+  <script src="static/js/html2canvas.min.js"></script>
+  <script src="static/js/dom-to-image.min.js"></script>
+  <script src="static/js/jspdf.min.js"></script>
   <script src='./static/js/graphs.js' type='text/javascript'></script>
 
 

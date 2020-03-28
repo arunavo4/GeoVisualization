@@ -362,6 +362,115 @@ function makeGraphs(error, recordsJson) {
 		barChart.render();
 	});
 
+	/**
+	 * JS to PDF report Printing (https://github.com/MrRio/jsPDF)
+	 * Convert all charts to svg and add to pdf
+	 */
+
+	$('#printReport').on('click', function(){ 
+		var doc = new jsPDF()
+
+		var title = $('#reportTitle').text()
+		
+		if (title == ""){
+			title = "Geo-Vis Report"
+		}
+		doc.setFont("arial")
+		// doc.setFontStyle("bold")
+		doc.setFontSize(18)
+		doc.text(title, 105, 15, null, null, "center")
+
+		const nodeList = document.querySelectorAll('.c3-chart-line .c3-lines path');
+		const nodeList2 = document.querySelectorAll('.c3-axis path');
+		const lineGraphPath = Array.from(nodeList);
+		const axisPathArray = Array.from(nodeList2);
+		lineGraphPath.forEach(function(element){
+			if (element.style.fill === '') {
+				element.style.fill = 'none';
+			}
+		});
+		axisPathArray.forEach(function(element){
+		if (element.style.fill === '') {
+				element.style.fill = 'none';
+				element.style.stroke = '#FFF';
+			}
+		})
+		
+		domtoimage.toPng(document.getElementById('map-stage'))
+			.then(function (dataUrl) {
+				doc.addImage(dataUrl, 'PNG', 15, 25, 180, 100)
+
+				html2canvas($("#timeline-stage")[0]).then(function(canvas) {
+						var image = canvas.toDataURL("image/png");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+						
+					  	doc.addImage(image, 'PNG', 15, 160, 180, 60)
+						// Auto Print
+						doc.autoPrint();
+						window.open(doc.output('bloburl'), '_blank')
+					});
+				
+				// domtoimage.toPng(document.getElementById('timeline-stage'))
+				// 	.then(function (dataUrl) {
+				// 		doc.addImage(dataUrl, 'SVG', 15, 160, 180, 60)
+				// 		doc.addPage();
+
+				// 		doc.autoPrint();
+				// 		window.open(doc.output('bloburl'), '_blank')
+						
+				// 		domtoimage.toPng(document.getElementById('habitat-stage'))
+				// 			.then(function (dataUrl) {
+				// 				doc.addImage(dataUrl, 'PNG', 15, 25, 55, 60)
+								
+				// 				domtoimage.toPng(document.getElementById('temp-stage'))
+				// 					.then(function (dataUrl) {
+				// 						doc.addImage(dataUrl, 'PNG', 75, 25, 55, 30)
+										
+				// 						domtoimage.toPng(document.getElementById('humidity-stage'))
+				// 							.then(function (dataUrl) {
+				// 								doc.addImage(dataUrl, 'PNG', 75, 60, 55, 30)
+												
+				// 								domtoimage.toPng(document.getElementById('#pie-1-stage'))
+				// 									.then(function (dataUrl) {
+				// 										doc.addImage(dataUrl, 'PNG', 135, 25, 55, 30)
+														
+				// 										domtoimage.toPng(document.getElementById('#pie-2-stage'))
+				// 											.then(function (dataUrl) {
+				// 												doc.addImage(dataUrl, 'PNG', 135, 60, 55, 30)
+																
+				// 												// Auto Print
+				// 												doc.autoPrint();
+				// 												window.open(doc.output('bloburl'), '_blank')
+				// 											})
+				// 											.catch(function (error) {
+				// 												console.error('oops, something went wrong!', error)
+				// 											});
+				// 									})
+				// 									.catch(function (error) {
+				// 										console.error('oops, something went wrong!', error)
+				// 									});
+				// 							})
+				// 							.catch(function (error) {
+				// 								console.error('oops, something went wrong!', error)
+				// 							});
+				// 					})
+				// 					.catch(function (error) {
+				// 						console.error('oops, something went wrong!', error)
+				// 					});
+				// 			})
+				// 			.catch(function (error) {
+				// 				console.error('oops, something went wrong!', error)
+				// 			});
+					// })
+					// .catch(function (error) {
+					// 	console.error('oops, something went wrong!', error)
+					// });
+			})
+			.catch(function (error) {
+				console.error('oops, something went wrong!', error)
+			});
+	});
+	
+
 	// $(function () {
 	// 	$('inputdatestart').datepicker({format: "dd/mm/yyyy"}); 
 	// 	$('inputdateend').datepicker({format: "dd/mm/yyyy"}); 
