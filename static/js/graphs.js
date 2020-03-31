@@ -401,69 +401,41 @@ function makeGraphs(error, recordsJson) {
 				doc.addImage(dataUrl, 'PNG', 15, 25, 180, 100)
 
 				html2canvas($("#timeline-stage")[0]).then(function(canvas) {
-						var image = canvas.toDataURL("image/png");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
-						
-					  	doc.addImage(image, 'PNG', 15, 160, 180, 60)
-						// Auto Print
-						doc.autoPrint();
-						window.open(doc.output('bloburl'), '_blank')
-					});
-				
-				// domtoimage.toPng(document.getElementById('timeline-stage'))
-				// 	.then(function (dataUrl) {
-				// 		doc.addImage(dataUrl, 'SVG', 15, 160, 180, 60)
-				// 		doc.addPage();
+						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 160, 180, 60);
+						doc.addPage();
 
-				// 		doc.autoPrint();
-				// 		window.open(doc.output('bloburl'), '_blank')
+						html2canvas($("#habitat-stage")[0]).then(function(canvas) {
+							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 25, 55, 60);
+
+							html2canvas($("#temp-stage")[0]).then(function(canvas) {
+								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 25, 55, 30);
+
+								html2canvas($("#humidity-stage")[0]).then(function(canvas) {
+									doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 60, 55, 30);
+	
+	
+									html2canvas($("#pie-1-stage")[0]).then(function(canvas) {
+										doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 25, 55, 30);
+		
+										html2canvas($("#pie-2-stage")[0]).then(function(canvas) {
+											doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 60, 55, 30);
+			
+											// Auto Print
+											doc.autoPrint();
+											window.open(doc.output('bloburl'), '_blank');
+			
+										});
+		
+									});
+	
+								});
+
+							});
+							
+						});
 						
-				// 		domtoimage.toPng(document.getElementById('habitat-stage'))
-				// 			.then(function (dataUrl) {
-				// 				doc.addImage(dataUrl, 'PNG', 15, 25, 55, 60)
-								
-				// 				domtoimage.toPng(document.getElementById('temp-stage'))
-				// 					.then(function (dataUrl) {
-				// 						doc.addImage(dataUrl, 'PNG', 75, 25, 55, 30)
-										
-				// 						domtoimage.toPng(document.getElementById('humidity-stage'))
-				// 							.then(function (dataUrl) {
-				// 								doc.addImage(dataUrl, 'PNG', 75, 60, 55, 30)
-												
-				// 								domtoimage.toPng(document.getElementById('#pie-1-stage'))
-				// 									.then(function (dataUrl) {
-				// 										doc.addImage(dataUrl, 'PNG', 135, 25, 55, 30)
-														
-				// 										domtoimage.toPng(document.getElementById('#pie-2-stage'))
-				// 											.then(function (dataUrl) {
-				// 												doc.addImage(dataUrl, 'PNG', 135, 60, 55, 30)
-																
-				// 												// Auto Print
-				// 												doc.autoPrint();
-				// 												window.open(doc.output('bloburl'), '_blank')
-				// 											})
-				// 											.catch(function (error) {
-				// 												console.error('oops, something went wrong!', error)
-				// 											});
-				// 									})
-				// 									.catch(function (error) {
-				// 										console.error('oops, something went wrong!', error)
-				// 									});
-				// 							})
-				// 							.catch(function (error) {
-				// 								console.error('oops, something went wrong!', error)
-				// 							});
-				// 					})
-				// 					.catch(function (error) {
-				// 						console.error('oops, something went wrong!', error)
-				// 					});
-				// 			})
-				// 			.catch(function (error) {
-				// 				console.error('oops, something went wrong!', error)
-				// 			});
-					// })
-					// .catch(function (error) {
-					// 	console.error('oops, something went wrong!', error)
-					// });
+					});
+		
 			})
 			.catch(function (error) {
 				console.error('oops, something went wrong!', error)
