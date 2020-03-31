@@ -309,7 +309,8 @@ function makeGraphs(error, recordsJson) {
 		.dimension(phylumDim)
 		.group(phylumGroup)
 		.label(function(d) {
-			return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+			// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+			return '';
 		});
 
 	pieChart2
@@ -318,7 +319,8 @@ function makeGraphs(error, recordsJson) {
 		.dimension(classDim)
 		.group(classGroup)
 		.label(function(d) {
-			return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+			// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+			return '';
 		});
 
 	$('#dropdown-menu-1 a').on('click', function(){    
@@ -329,7 +331,8 @@ function makeGraphs(error, recordsJson) {
 			.dimension(key_map[$(this).text()].Dim)
 			.group(key_map[$(this).text()].Group)
 			.label(function(d) {
-				return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+				// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+				return '';
 			});  
 		pieChart1.filterAll();dc.redrawAll();  
 	});
@@ -342,7 +345,8 @@ function makeGraphs(error, recordsJson) {
 			.dimension(key_map[$(this).text()].Dim)
 			.group(key_map[$(this).text()].Group)
 			.label(function(d) {
-				return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+				// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+				return '';
 			});  
 		pieChart2.filterAll();dc.redrawAll();   
 	});
@@ -371,12 +375,11 @@ function makeGraphs(error, recordsJson) {
 		var doc = new jsPDF()
 
 		var title = $('#reportTitle').text()
+		console.log(title);
 		
 		if (title == ""){
 			title = "Geo-Vis Report"
 		}
-		doc.setFont("arial")
-		// doc.setFontStyle("bold")
 		doc.setFontSize(18)
 		doc.text(title, 105, 15, null, null, "center")
 
@@ -405,20 +408,19 @@ function makeGraphs(error, recordsJson) {
 						doc.addPage();
 
 						html2canvas($("#habitat-stage")[0]).then(function(canvas) {
-							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 25, 55, 60);
+							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 25, 60, 100);
 
 							html2canvas($("#temp-stage")[0]).then(function(canvas) {
-								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 25, 55, 30);
+								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 25, 60, 40);
 
 								html2canvas($("#humidity-stage")[0]).then(function(canvas) {
-									doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 60, 55, 30);
-	
+									doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 80, 60, 40);
 	
 									html2canvas($("#pie-1-stage")[0]).then(function(canvas) {
-										doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 25, 55, 30);
+										doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 25, 65, 40);
 		
 										html2canvas($("#pie-2-stage")[0]).then(function(canvas) {
-											doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 60, 55, 30);
+											doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 80, 65, 40);
 			
 											// Auto Print
 											doc.autoPrint();
@@ -476,7 +478,6 @@ function makeGraphs(error, recordsJson) {
 		// Fill up array 
 		group_key = $(this).text();
 		autocomplete_keys = getKeys(key_map[$(this).text()].Group);
-		console.log(autocomplete_keys);
 		$( "#search" ).autocomplete('option', 'source', autocomplete_keys)
 	});
 
@@ -487,23 +488,19 @@ function makeGraphs(error, recordsJson) {
 
 	$('#filter').on('click', function(){ 
 		let term = $('#search').data('uiAutocomplete').term;
-		console.log("Term--->"+ term);
 		//check if it is not null and matches the keys then filter 
 		if (term!=null && (term in autocomplete_keys)) {
-			console.log("Filter-->"+ term);
 			filterGroup(key_map[group_key].Dim, term);
 		} 
 	});
 
 	$(function(){
-		console.log(autocomplete_keys);
 		
 		$("#search").autocomplete({
 			source: autocomplete_keys,
 			deferRequestBy: 100, // This is to avoid js error on fast typing
 			select: function (event, ui) {
 				var label = ui.item.label;
-				console.log(label);
 				filterGroup(key_map[group_key].Dim, label);
 			}
 		});
