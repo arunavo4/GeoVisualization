@@ -87,23 +87,23 @@ function makeGraphs(error, recordsJson) {
 	var key_map = {
 		Phylum: {
 			Dim: phylumDim,
-			Group: phylumGroup
+			Group: remove_empty_bins(phylumGroup)
 		},
 		Class: {
 			Dim: classDim,
-			Group: classGroup
+			Group: remove_empty_bins(classGroup)
 		},
 		Order: {
 			Dim: orderDim,
-			Group: orderGroup
+			Group: remove_empty_bins(orderGroup)
 		},
 		Family: {
 			Dim: familyDim,
-			Group: familyGroup
+			Group: remove_empty_bins(familyGroup)
 		},
 		Genus: {
 			Dim: genusDim,
-			Group: genusGroup
+			Group: remove_empty_bins(genusGroup)
 		},
 		State : {
 			Dim: stateDim,
@@ -124,8 +124,11 @@ function makeGraphs(error, recordsJson) {
 		.valueAccessor(function(d){return d; })
 		.group(all);
 
+	var timeWidth = document.getElementById('timeline-stage').offsetWidth;
+	timeWidth -= (4/135)*timeWidth;
+	timeWidth = Math.ceil(timeWidth);
 	timeChartSmall
-		.width(1080)
+		.width(timeWidth)
 		.height(50)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
@@ -137,7 +140,7 @@ function makeGraphs(error, recordsJson) {
 		.yAxis().ticks(4);
 
 	timeChart
-		.width(1080)
+		.width(timeWidth)
 		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 20})
 		.dimension(dateDim)
@@ -153,7 +156,7 @@ function makeGraphs(error, recordsJson) {
 		// .xUnits(d3.time.day)
 
 	barChart
-		.width(1080)
+		.width(timeWidth)
 		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 50})
 		.dimension(key_map["Phylum"].Dim)
@@ -191,9 +194,10 @@ function makeGraphs(error, recordsJson) {
 
 	// barChart
 	// 	.xAxis().tickValues([]);
+	var width = document.getElementById('habitat-stage').offsetWidth;
 
 	entomofaunaChart
-        .width(300)
+        .width(width)
         .height(100)
         .dimension(entomofaunaDim)
         .group(entomofaunaGroup)
@@ -203,7 +207,7 @@ function makeGraphs(error, recordsJson) {
         .xAxis().ticks(4);
 
 	otherInvertebrateChart
-        .width(300)
+        .width(width)
         .height(100)
         .dimension(otherInvertebrateDim)
         .group(otherInvertebrateGroup)
@@ -213,7 +217,7 @@ function makeGraphs(error, recordsJson) {
 		.xAxis().ticks(4);
 		
 	vertebrateChart
-        .width(300)
+        .width(width)
         .height(100)
         .dimension(vertebrateDim)
         .group(vertebrateGroup)
@@ -221,19 +225,21 @@ function makeGraphs(error, recordsJson) {
         .colors(['#6baed6'])
         .elasticX(true)
         .xAxis().ticks(4);
-
+	
 	habitatChart
-		.width(330)
+		.width(width)
 		.height(420)
         .dimension(habitatDim)
         .group(habitatGroup)
         .ordering(function(d) { return -d.value })
         .colors(['#6baed6'])
         .elasticX(true)
-        .xAxis().ticks(4);
+		.xAxis().ticks(4);
+		
+	var stateDistWidth =  document.getElementById('state-stage').offsetWidth;
 
     stateChart
-    	.width(200)
+    	.width(stateDistWidth)
 		.height(950)
         .dimension(stateDim)
         .group(stateGroup)
@@ -244,7 +250,7 @@ function makeGraphs(error, recordsJson) {
 		.xAxis().ticks(4);
 
 	districtChart
-    	.width(200)
+    	.width(stateDistWidth)
         .dimension(districtDim)
         .group(nonEmptyDistrict)
 		.ordering(function(d) { return -d.value })
@@ -280,7 +286,7 @@ function makeGraphs(error, recordsJson) {
 	updateChartHeight(districtChart, 950);	
 		
 	temperatureChart
-		.width(350)
+		.width(width)
 		.height(180)
 		.margins({top: 10, right: 10, bottom: 20, left: 50})
         .dimension(temperatureDim)
@@ -292,7 +298,7 @@ function makeGraphs(error, recordsJson) {
         .yAxis().ticks(4);
 
 	humidityChart
-		.width(350)
+		.width(width)
 		.height(180)
 		.margins({top: 10, right: 20, bottom: 20, left: 50})
         .dimension(humidityDim)
@@ -304,7 +310,7 @@ function makeGraphs(error, recordsJson) {
 		.yAxis().ticks(4);
 		
 	pieChart1
-		.width(310)
+		.width(width)
 		.height(178)
 		.dimension(phylumDim)
 		.group(phylumGroup)
@@ -314,7 +320,7 @@ function makeGraphs(error, recordsJson) {
 		});
 
 	pieChart2
-		.width(310)
+		.width(width)
 		.height(178)
 		.dimension(classDim)
 		.group(classGroup)
@@ -326,7 +332,7 @@ function makeGraphs(error, recordsJson) {
 	$('#dropdown-menu-1 a').on('click', function(){    
 		$('#toggle-1').html($(this).html() + ' <span class="caret"></span>');
 		pieChart1
-			.width(310)
+			.width(width)
 			.height(178)
 			.dimension(key_map[$(this).text()].Dim)
 			.group(key_map[$(this).text()].Group)
@@ -340,7 +346,7 @@ function makeGraphs(error, recordsJson) {
 	$('#dropdown-menu-2 a').on('click', function(){    
 		$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');   
 		pieChart2
-			.width(310)
+			.width(width)
 			.height(178)
 			.dimension(key_map[$(this).text()].Dim)
 			.group(key_map[$(this).text()].Group)
