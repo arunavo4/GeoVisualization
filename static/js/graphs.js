@@ -922,12 +922,12 @@ function makeGraphs(error, recordsJson) {
 			if (filters.length == 0) {
 				filters = getKeys(dcChart[1].group());
 				if( dcChart[0] == 'Date Range'){
-					filters = [filters[0], filters[filters.length - 1]]
+					filters = [filters[0].toDateString(), filters[filters.length - 1].toDateString()]
 				}
 			}else{
 				if( dcChart[0] == 'Date Range'){
 					filters = filters[0]
-					filters = [filters[0], filters[1]]
+					filters = [filters[0].toDateString(), filters[1].toDateString()]
 				}
 			}
 			if (somearray.includes(chartName)) {
