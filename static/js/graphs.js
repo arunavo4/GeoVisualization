@@ -378,13 +378,27 @@ function makeGraphs(error, recordsJson) {
 	 */
 
 	$('#printReport').on('click', function(){ 
+		// Loader
+		var $this = $(this);
+		$this.button('loading');
+
 		var doc = new jsPDF()
 
 		var title = document.getElementById('reportTitle').value;
-		console.log(title);
 		
 		doc.setFontSize(18)
 		doc.text(title, 105, 15, null, null, "center")
+
+		// Date time
+		doc.setFontSize(10)
+		var d = new Date();
+		let date = 'Date: ' + d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
+		let time = 'Time: ' + d.getHours() + ':' + d.getMinutes();
+		doc.text(date, 15, 25, null, null, "left")
+		doc.text(time, 15, 30, null, null, "left")
+
+		//Applied Filters
+
 
 		const nodeList = document.querySelectorAll('.c3-chart-line .c3-lines path');
 		const nodeList2 = document.querySelectorAll('.c3-axis path');
@@ -404,10 +418,10 @@ function makeGraphs(error, recordsJson) {
 		
 		domtoimage.toPng(document.getElementById('map-stage'))
 			.then(function (dataUrl) {
-				doc.addImage(dataUrl, 'PNG', 15, 25, 180, 100)
+				doc.addImage(dataUrl, 'PNG', 15, 60, 180, 90)
 
 				html2canvas($("#timeline-stage")[0]).then(function(canvas) {
-						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 160, 180, 60);
+						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 180, 180, 60);
 						doc.addPage();
 
 						html2canvas($("#habitat-stage")[0]).then(function(canvas) {
@@ -428,7 +442,7 @@ function makeGraphs(error, recordsJson) {
 											// Auto Print
 											doc.autoPrint();
 											window.open(doc.output('bloburl'), '_blank');
-			
+											$this.button('reset');
 										});
 		
 									});
