@@ -418,35 +418,32 @@ function makeGraphs(error, recordsJson) {
 		
 		domtoimage.toPng(document.getElementById('map-stage'))
 			.then(function (dataUrl) {
-				doc.addImage(dataUrl, 'PNG', 15, 60, 180, 90)
+				doc.setFontSize(10)
+				doc.addImage(dataUrl, 'PNG', 15, 100, 180, 90)
+				doc.text("Fig 1: Spatial Distribution", 105, 195, null, null, "center")
 
-				html2canvas($("#timeline-stage")[0]).then(function(canvas) {
-						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 180, 180, 60);
+				html2canvas($("#timeline-stage")[0], { scale: 2 }).then(function(canvas) {
+						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 210, 180, 60);
+						doc.text("Fig 2: Timeline & Distribution", 105, 275, null, null, "center")
+
 						doc.addPage();
 
-						html2canvas($("#habitat-stage")[0]).then(function(canvas) {
-							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 25, 60, 100);
+						html2canvas($("#habitat-stage")[0], { scale: 2 }).then(function(canvas) {
+							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 25, 90, 120);
+							doc.text("Fig 3: Habitat Distribution", 40, 150, null, null, "left")
 
-							html2canvas($("#temp-stage")[0]).then(function(canvas) {
-								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 25, 60, 40);
+							html2canvas($("#temp-stage")[0], { scale: 2 }).then(function(canvas) {
+								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, 25, 90, 50);
+								doc.text("Fig 4: Temperature Distribution", 130, 80, null, null, "left");
 
-								html2canvas($("#humidity-stage")[0]).then(function(canvas) {
-									doc.addImage(canvas.toDataURL("image/png"), 'PNG', 75, 80, 60, 40);
-	
-									html2canvas($("#pie-1-stage")[0]).then(function(canvas) {
-										doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 25, 65, 40);
-		
-										html2canvas($("#pie-2-stage")[0]).then(function(canvas) {
-											doc.addImage(canvas.toDataURL("image/png"), 'PNG', 135, 80, 65, 40);
-			
-											// Auto Print
-											doc.autoPrint();
-											window.open(doc.output('bloburl'), '_blank');
-											$this.button('reset');
-										});
-		
-									});
-	
+								html2canvas($("#humidity-stage")[0], { scale: 2 }).then(function(canvas) {
+									doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, 90, 90, 50);
+									doc.text("Fig 5: Humidity Distribution", 130, 150, null, null, "left")
+
+									// Auto Print
+									doc.autoPrint();
+									window.open(doc.output('bloburl'), '_blank');
+									$this.button('reset');
 								});
 
 							});
