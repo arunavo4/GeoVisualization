@@ -380,12 +380,9 @@ function makeGraphs(error, recordsJson) {
 	$('#printReport').on('click', function(){ 
 		var doc = new jsPDF()
 
-		var title = $('#reportTitle').text()
+		var title = document.getElementById('reportTitle').value;
 		console.log(title);
 		
-		if (title == ""){
-			title = "Geo-Vis Report"
-		}
 		doc.setFontSize(18)
 		doc.text(title, 105, 15, null, null, "center")
 
