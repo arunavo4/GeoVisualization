@@ -127,6 +127,7 @@ function makeGraphs(error, recordsJson) {
 	var timeWidth = document.getElementById('timeline-stage').offsetWidth;
 	timeWidth -= (4/135)*timeWidth;
 	timeWidth = Math.ceil(timeWidth);
+
 	timeChartSmall
 		.width(timeWidth)
 		.height(50)
@@ -329,8 +330,16 @@ function makeGraphs(error, recordsJson) {
 			return '';
 		});
 
+	var dynamic_name_store = {
+		'BarChart': 'Phylum',
+		'PieChart1': 'Phylum',
+		'PieChart2': 'Class'
+	}
+
 	$('#dropdown-menu-1 a').on('click', function(){    
 		$('#toggle-1').html($(this).html() + ' <span class="caret"></span>');
+		dynamic_name_store['PieChart1'] = $(this).text();
+
 		pieChart1
 			.width(width)
 			.height(178)
@@ -344,7 +353,9 @@ function makeGraphs(error, recordsJson) {
 	});
 
 	$('#dropdown-menu-2 a').on('click', function(){    
-		$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');   
+		$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');  
+		dynamic_name_store['PieChart2'] = $(this).text();
+
 		pieChart2
 			.width(width)
 			.height(178)
@@ -360,6 +371,8 @@ function makeGraphs(error, recordsJson) {
 	$('#dropdown-menu-3 a').on('click', function(){    
 		$('#toggle-3').html($(this).html() + ' <span class="caret"></span>'); 
 		var label = $(this).text();  
+		dynamic_name_store['BarChart'] = $(this).text();
+
 		barChart
 		.dimension(key_map[label].Dim)
 		.group(key_map[label].Group)
@@ -398,6 +411,9 @@ function makeGraphs(error, recordsJson) {
 		doc.text(time, 15, 30, null, null, "left")
 
 		//Applied Filters
+		filters = getAllActiveFilters();
+		console.log(filters);
+		
 
 
 		const nodeList = document.querySelectorAll('.c3-chart-line .c3-lines path');
@@ -737,6 +753,7 @@ function makeGraphs(error, recordsJson) {
 		_.each(allDim.top(Infinity), function (d) {
 			var title = d["UniqueSurveyID"];
 			var thumbnail = d["ImageAnimal"] || d["ImageHabitat"] || d["ImageHost"];
+
 			var selfIcon = new L.divIcon({
 				className: 'my-div-icon',
 				iconSize: [50, 50],
@@ -842,10 +859,30 @@ function makeGraphs(error, recordsJson) {
 	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
 		 stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
+	dcChartsName = [['Date Range' , timeChartSmall], ['States', stateChart],['Districts', districtChart],
+	  ['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], [' Other Invertebrate', otherInvertebrateChart], 
+	  ['Temperature', temperatureChart], ['Humidity', humidityChart], ['BarChart', barChart], ['PieChart1',pieChart1],['PieChart2',pieChart2]];
 	/* Turn off resizing for now */
 	// _.each(dcCharts, function (dcChart) {
 	// 	apply_resizing(dcChart, 20);
 	// });
+	function getAllActiveFilters() {
+		var array = [];
+		var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+		dcChartsName.forEach(dcChart => {
+			var filters = dcChart[1].filters();
+			var chartName = dcChart[0];
+			if (filters.length == 0) {
+				filters = getKeys(dcChart[1].group());
+			}
+			if (somearray.includes(chartName)) {
+				chartName = dynamic_name_store[chartName];
+			}
+			array.push(chartName, filters);
+		});
+		return array; 
+	}
+	
 
 	_.each(dcCharts, function (dcChart) {
 		dcChart.on("filtered", function (chart, filter) {			

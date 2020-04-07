@@ -8,6 +8,14 @@ from flask import render_template
 import json
 
 data_path = './static/data'
+placeholder = './static/images/placeholder_square.png'
+
+
+def check_file(x):
+    if os.path.exists(x):
+        return x
+    else:
+        return placeholder
 
 
 def find_range(x):
@@ -64,6 +72,10 @@ def get_data():
     # Group the Temp and Humidity
     df['Temperature'] = df['Temperature'].apply(find_range)
     df['Humidity'] = df['Humidity'].apply(find_range)
+
+    df['ImageAnimal'] = df['ImageAnimal'].fillna(placeholder).astype(str).apply(check_file)
+    df['ImageHabitat'] = df['ImageHabitat'].fillna(placeholder).astype(str).apply(check_file)
+    df['ImageHost'] = df['ImageHost'].fillna(placeholder).astype(str).apply(check_file)
 
     return df.to_json(orient='records')
 
