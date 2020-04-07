@@ -395,7 +395,8 @@ function makeGraphs(error, recordsJson) {
 		var $this = $(this);
 		$this.button('loading');
 
-		var doc = new jsPDF()
+		var doc = new jsPDF();				
+		var size = 10;
 
 		var title = document.getElementById('reportTitle').value;
 		
@@ -403,7 +404,7 @@ function makeGraphs(error, recordsJson) {
 		doc.text(title, 105, 15, null, null, "center")
 
 		// Date time
-		doc.setFontSize(10)
+		doc.setFontSize(size)
 		var d = new Date();
 		let date = 'Date: ' + d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
 		let time = 'Time: ' + d.getHours() + ':' + d.getMinutes();
@@ -412,10 +413,32 @@ function makeGraphs(error, recordsJson) {
 
 		//Applied Filters
 		filters = getAllActiveFilters();
-		console.log(filters);
+		doc.setFontType("bold");
+		doc.text('Applied Filters: ', 15, 40, null, null, "left");
+
+		var y = 45;
+		for (let index = 0; index < filters.length; index++) {
+			const element = filters[index];
+			let text = element[1].join(', ');
+			var pageHeight = doc.internal.pageSize.height;
+			doc.setFontType("bold");
+			doc.text(element[0] + ': ', 15, y, null, null, "left");
+			let x = 18 + doc.getTextWidth(element[0]);
+			/*var dim = doc.getTextDimensions('Text');
+			console.log(dim); // Object {w: 24.149968818897642, h: 19.499975433070865} */
+			var splitText = doc.splitTextToSize(text, 200-x);
+
+			doc.setFontType("normal");
+			for (var i = 0; i < splitText.length; i++) {                
+				if (y > 280) {
+					y = 25;
+					doc.addPage();
+				}
+				doc.text(splitText[i], x, y,"justify");
+				y = y + 7;
+			}
+		}
 		
-
-
 		const nodeList = document.querySelectorAll('.c3-chart-line .c3-lines path');
 		const nodeList2 = document.querySelectorAll('.c3-axis path');
 		const lineGraphPath = Array.from(nodeList);
@@ -434,39 +457,63 @@ function makeGraphs(error, recordsJson) {
 		
 		domtoimage.toPng(document.getElementById('map-stage'))
 			.then(function (dataUrl) {
-				doc.setFontSize(10)
-				doc.addImage(dataUrl, 'PNG', 15, 100, 180, 90)
-				doc.text("Fig 1: Spatial Distribution", 105, 195, null, null, "center")
+				doc.setFontSize(size)
+				y = y + 5;
+				if (y + 90 > 280) {
+					y = 25;
+					doc.addPage();
+				} 
+				doc.addImage(dataUrl, 'PNG', 15, y, 180, 90)
+				y += 95;
+				if (y > 280) {
+					y = 25;
+					doc.addPage();
+				} 
+				doc.text("Fig 1: Spatial Distribution", 105, y, null, null, "center")
 
 				html2canvas($("#timeline-stage")[0], { scale: 2 }).then(function(canvas) {
-						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 210, 180, 60);
-						doc.text("Fig 2: Timeline & Distribution", 105, 275, null, null, "center")
-
+					y = y + 10;
+					if (y + 60 > 280) {
+						y = 25;
 						doc.addPage();
+					} 
+					doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, y, 180, 60);
+					y += 65;
+					if (y > 280) {
+						y = 25;
+						doc.addPage();
+					}
+					doc.text("Fig 2: Timeline & Distribution", 105, y, null, null, "center")
 
-						html2canvas($("#habitat-stage")[0], { scale: 2 }).then(function(canvas) {
-							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 25, 90, 120);
-							doc.text("Fig 3: Habitat Distribution", 40, 150, null, null, "left")
+					html2canvas($("#habitat-stage")[0], { scale: 2 }).then(function(canvas) {
+						y = y + 10;
+						if (y + 120 > 280) {
+							y = 25;
+							doc.addPage();
+						} 
+						var save
+						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, y, 90, 120);
+						doc.text("Fig 3: Habitat Distribution", 40, y + 120, null, null, "left")
 
-							html2canvas($("#temp-stage")[0], { scale: 2 }).then(function(canvas) {
-								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, 25, 90, 50);
-								doc.text("Fig 4: Temperature Distribution", 130, 80, null, null, "left");
+						html2canvas($("#temp-stage")[0], { scale: 2 }).then(function(canvas) {
+							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, y, 90, 50);
+							doc.text("Fig 4: Temperature Distribution", 130, y + 55, null, null, "left");
 
-								html2canvas($("#humidity-stage")[0], { scale: 2 }).then(function(canvas) {
-									doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, 90, 90, 50);
-									doc.text("Fig 5: Humidity Distribution", 130, 150, null, null, "left")
+							html2canvas($("#humidity-stage")[0], { scale: 2 }).then(function(canvas) {
+								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, y + 65, 90, 50);
+								doc.text("Fig 5: Humidity Distribution", 130, y + 55 + 65, null, null, "left")
 
-									// Auto Print
-									doc.autoPrint();
-									window.open(doc.output('bloburl'), '_blank');
-									$this.button('reset');
-								});
-
+								// Auto Print
+								doc.autoPrint();
+								window.open(doc.output('bloburl'), '_blank');
+								$this.button('reset');
 							});
-							
+
 						});
 						
 					});
+						
+				});
 		
 			})
 			.catch(function (error) {
@@ -860,7 +907,7 @@ function makeGraphs(error, recordsJson) {
 		 stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	dcChartsName = [['Date Range' , timeChartSmall], ['States', stateChart],['Districts', districtChart],
-	  ['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], [' Other Invertebrate', otherInvertebrateChart], 
+	  ['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], ['Other Invertebrate', otherInvertebrateChart], 
 	  ['Temperature', temperatureChart], ['Humidity', humidityChart], ['BarChart', barChart], ['PieChart1',pieChart1],['PieChart2',pieChart2]];
 	/* Turn off resizing for now */
 	// _.each(dcCharts, function (dcChart) {
@@ -874,11 +921,22 @@ function makeGraphs(error, recordsJson) {
 			var chartName = dcChart[0];
 			if (filters.length == 0) {
 				filters = getKeys(dcChart[1].group());
+				if( dcChart[0] == 'Date Range'){
+					filters = [filters[0], filters[filters.length - 1]]
+				}
+			}else{
+				if( dcChart[0] == 'Date Range'){
+					filters = filters[0]
+					filters = [filters[0], filters[1]]
+				}
 			}
 			if (somearray.includes(chartName)) {
 				chartName = dynamic_name_store[chartName];
 			}
-			array.push(chartName, filters);
+			if(chartName == 'Districts'){
+				filters = filters.map(x => String(x).split('_')[1]);
+			}
+			array.push([chartName, filters]);
 		});
 		return array; 
 	}
