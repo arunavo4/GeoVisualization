@@ -649,9 +649,6 @@ function makeGraphs(error, recordsJson) {
 	});
 
 	function filterGroup(chart, key) {
-		console.log("Trying to filter Group ", key);
-		
-		// Dim.filter(function(d) {return d === Key});
 		chart.filter(key);
 		dc.renderAll();dc.redrawAll();
 	}
