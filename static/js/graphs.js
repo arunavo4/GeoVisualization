@@ -833,7 +833,7 @@ function makeGraphs(error, recordsJson) {
 			
 			function showMarkerData(e){
 				var data =  e.target.data;
-				document.getElementById("sidebar-title").innertext += "UNIQUE ID" + data.UniqueSurveyID;
+				document.getElementById("sidebar-title").innerHTML += `UNIQUE ID: ` + data.UniqueSurveyID;
 
 				if (data.ImageAnimal != null) {
 					document.getElementById("ImageAnimal").src = data.ImageAnimal;
@@ -847,7 +847,7 @@ function makeGraphs(error, recordsJson) {
 
                 //compile the string
                 for (var i in data){
-					if(i != 'Unnamed: 0'){
+					if(i != 'Unnamed: 0' && i!='ImageAnimal' && i!='ImageHabitat' && i!='ImageHost'){
 						document.getElementById("data").innerHTML += `<p class=\"font-weight-normal\" ><b>` + i + `: </b>` + data[i] + `</p>`;
 					}
 				}
