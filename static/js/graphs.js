@@ -104,19 +104,31 @@ function makeGraphs(error, recordsJson) {
 		Genus: {
 			Dim: genusDim,
 			Group: remove_empty_bins(genusGroup)
-		},
-		State : {
-			Dim: stateDim,
-			Group: stateGroup
-		},
-		District : {
-			Dim: districtDim,
-			Group: districtGroup
-		},
-		Habitat : {
-			Dim: habitatDim,
-			Group: habitatGroup
-		},
+		}
+		// States : {
+		// 	Dim: stateDim,
+		// 	Group: stateGroup
+		// },
+		// Districts : {
+		// 	Dim: districtDim,
+		// 	Group: districtGroup
+		// },
+		// Habitats : {
+		// 	Dim: habitatDim,
+		// 	Group: habitatGroup
+		// },
+		// Habitats : {
+		// 	Dim: habitatDim,
+		// 	Group: habitatGroup
+		// },
+		// Habitats : {
+		// 	Dim: habitatDim,
+		// 	Group: habitatGroup
+		// },
+		// Habitats : {
+		// 	Dim: habitatDim,
+		// 	Group: habitatGroup
+		// },
 	};
 
 	// Place to Store the key-value pair for the 3 dropdown menu
@@ -602,7 +614,7 @@ function makeGraphs(error, recordsJson) {
 
 	var autocomplete_keys = [];
 	var group_key = "States";
-	autocomplete_keys = getKeys(phylumGroup);
+	autocomplete_keys = getKeys(stateGroup);
 
 	
 	// Populate nav-filter-dropdown dynamically
@@ -625,39 +637,51 @@ function makeGraphs(error, recordsJson) {
 			$('#toggle-nav').html($(this).html() + ' <span class="caret"></span>'); 
 			// Fill up array 
 			group_key = $(this).text();
-			autocomplete_keys = getKeys(key_map[$(this).text()].Group);
+			for (const keyPair of dcChartsName) {
+				if (keyPair[0] == group_key) {
+					autocomplete_keys = getKeys(keyPair[1].group());
+					break;
+				}
+			}
 			$( "#search" ).autocomplete('option', 'source', autocomplete_keys)
 		});
 
 	});
 
-	function filterGroup(Dim, Key) {
+	function filterGroup(chart, key) {
+		console.log("Trying to filter Group ", key);
+		
 		// Dim.filter(function(d) {return d === Key});
-		Dim.select(Key);
-		dc.renderAll();
+		chart.filter(key);
+		dc.renderAll();dc.redrawAll();
 	}
 
 	$('#filter').on('click', function(){ 
 		let term = $('#search').data('uiAutocomplete').term;
 		//check if it is not null and matches the keys then filter 
-		if (term!=null && (term in autocomplete_keys)) {
-			// filterGroup(key_map[group_key].Dim, term);
-			console.log(dcChartsName[group_key], term);
-			filterGroup(dcChartsName[group_key], term);
+		if (term!=null && autocomplete_keys.includes(term)) {
+			
+			for (const keyPair of dcChartsName) {
+				if (keyPair[0] == group_key) {
+					filterGroup(keyPair[1], term);
+					break;
+				}
+			}
 		} 
 	});
 
 	$(function(){
-		
 		$("#search").autocomplete({
 			source: autocomplete_keys,
 			deferRequestBy: 100, // This is to avoid js error on fast typing
 			select: function (event, ui) {
 				var label = ui.item.label;
-				// filterGroup(key_map[group_key].Dim, label);
-				console.log(group_key, dcChartsName[group_key], label);
-				
-				filterGroup(dcChartsName[group_key], label);
+				for (const keyPair of dcChartsName) {
+					if (keyPair[0] == group_key) {
+						filterGroup(keyPair[1], label);
+						break;
+					}
+				}
 			}
 		});
 		
