@@ -119,6 +119,16 @@ function makeGraphs(error, recordsJson) {
 		},
 	};
 
+	// Place to Store the key-value pair for the 3 dropdown menu
+	var dynamic_name_store = {
+		'BarChart': 'Order',
+		'PieChart1': 'Phylum',
+		'PieChart2': 'Class'
+	}
+	$('#toggle-3').html(dynamic_name_store['BarChart'] + ' <span class="caret"></span>');
+	$('#toggle-1').html(dynamic_name_store['PieChart1'] + ' <span class="caret"></span>');
+	$('#toggle-2').html(dynamic_name_store['PieChart2'] + ' <span class="caret"></span>');
+
 	numberRecordsND
 		.formatNumber(d3.format("d"))
 		.valueAccessor(function(d){return d; })
@@ -160,10 +170,10 @@ function makeGraphs(error, recordsJson) {
 		.width(timeWidth)
 		.height(140)
 		.margins({top: 10, right: 10, bottom: 20, left: 50})
-		.dimension(key_map["Phylum"].Dim)
-        .group(key_map['Phylum'].Group)
+		.dimension(key_map[dynamic_name_store["BarChart"]].Dim)
+        .group(key_map[dynamic_name_store["BarChart"]].Group)
 		.colors(['#6baed6'])
-		.x(d3.scale.ordinal().domain(key_map["Phylum"].Dim)) 
+		.x(d3.scale.ordinal().domain(key_map[dynamic_name_store["BarChart"]].Dim)) 
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
 		.yAxis().ticks(4);
@@ -313,8 +323,8 @@ function makeGraphs(error, recordsJson) {
 	pieChart1
 		.width(width)
 		.height(178)
-		.dimension(phylumDim)
-		.group(phylumGroup)
+		.dimension(key_map[dynamic_name_store["PieChart1"]].Dim)
+        .group(key_map[dynamic_name_store["PieChart1"]].Group)
 		.label(function(d) {
 			// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
 			return '';
@@ -323,68 +333,101 @@ function makeGraphs(error, recordsJson) {
 	pieChart2
 		.width(width)
 		.height(178)
-		.dimension(classDim)
-		.group(classGroup)
+		.dimension(key_map[dynamic_name_store["PieChart2"]].Dim)
+        .group(key_map[dynamic_name_store["PieChart2"]].Group)
 		.label(function(d) {
 			// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
 			return '';
 		});
 
-	var dynamic_name_store = {
-		'BarChart': 'Phylum',
-		'PieChart1': 'Phylum',
-		'PieChart2': 'Class'
-	}
+	
+	var pie_dropdown_options = ['Phylum', 'Class', 'Order', 'Family', 'Genus'];
 
-	$('#dropdown-menu-1 a').on('click', function(){    
-		$('#toggle-1').html($(this).html() + ' <span class="caret"></span>');
-		dynamic_name_store['PieChart1'] = $(this).text();
+	$('#toggle-1').on('click', function(){
+		//Make sure its empty
+		$('#dropdown-menu-1').html(``);
+		for (const keyPair of pie_dropdown_options) {
+			if (keyPair != dynamic_name_store['BarChart'] && keyPair != dynamic_name_store['PieChart2']) {
+				$('#dropdown-menu-1').html($('#dropdown-menu-1').html() + `<li><a>` + keyPair + `</a></li>`);	
+			}
+		}
 
-		pieChart1
-			.width(width)
-			.height(178)
-			.dimension(key_map[$(this).text()].Dim)
-			.group(key_map[$(this).text()].Group)
-			.label(function(d) {
-				// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-				return '';
-			});  
-		pieChart1.filterAll();dc.redrawAll();  
+		// Attach Click Listeners to Them.
+		$('#dropdown-menu-1 a').on('click', function(){    
+			$('#toggle-1').html($(this).html() + ' <span class="caret"></span>');
+			dynamic_name_store['PieChart1'] = $(this).text();
+	
+			pieChart1
+				.width(width)
+				.height(178)
+				.dimension(key_map[$(this).text()].Dim)
+				.group(key_map[$(this).text()].Group)
+				.label(function(d) {
+					// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+					return '';
+				});  
+			pieChart1.filterAll();dc.redrawAll();  
+		});
 	});
 
-	$('#dropdown-menu-2 a').on('click', function(){    
-		$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');  
-		dynamic_name_store['PieChart2'] = $(this).text();
 
-		pieChart2
-			.width(width)
-			.height(178)
-			.dimension(key_map[$(this).text()].Dim)
-			.group(key_map[$(this).text()].Group)
-			.label(function(d) {
-				// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-				return '';
-			});  
-		pieChart2.filterAll();dc.redrawAll();   
+
+	$('#toggle-2').on('click', function(){
+		//Make sure its empty
+		$('#dropdown-menu-2').html(``);
+		for (const keyPair of pie_dropdown_options) {
+			if (keyPair != dynamic_name_store['BarChart'] && keyPair != dynamic_name_store['PieChart1']) {
+				$('#dropdown-menu-2').html($('#dropdown-menu-2').html() + `<li><a>` + keyPair + `</a></li>`);	
+			}
+		}
+
+		// Attach Click listeners to them.
+		$('#dropdown-menu-2 a').on('click', function(){    
+			$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');  
+			dynamic_name_store['PieChart2'] = $(this).text();
+	
+			pieChart2
+				.width(width)
+				.height(178)
+				.dimension(key_map[$(this).text()].Dim)
+				.group(key_map[$(this).text()].Group)
+				.label(function(d) {
+					// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
+					return '';
+				});  
+			pieChart2.filterAll();dc.redrawAll();   
+		});
 	});
 
-	$('#dropdown-menu-3 a').on('click', function(){    
-		$('#toggle-3').html($(this).html() + ' <span class="caret"></span>'); 
-		var label = $(this).text();  
-		dynamic_name_store['BarChart'] = $(this).text();
-
-		barChart
-		.dimension(key_map[label].Dim)
-		.group(key_map[label].Group)
-		.x(d3.scale.ordinal().domain(key_map[label].Dim))
-		.xUnits(dc.units.ordinal)
-		.elasticX(true);
-		// .xAxisLabel(label)
-		barChart.focus(getKeys(key_map[label].Group));
-		barChart.filterAll(); dc.redrawAll();   
-		barChart.render();
+	$('#toggle-3').on('click', function(){
+		//Make sure its empty
+		$('#dropdown-menu-3').html(``);
+		for (const keyPair of pie_dropdown_options) {
+			if (keyPair != dynamic_name_store['PieChart1'] && keyPair != dynamic_name_store['PieChart2']) {
+				$('#dropdown-menu-3').html($('#dropdown-menu-3').html() + `<li><a>` + keyPair + `</a></li>`);	
+			}
+		}
+		
+		// Attach Click listeners to them.
+		$('#dropdown-menu-3 a').on('click', function(){    
+			$('#toggle-3').html($(this).html() + ' <span class="caret"></span>'); 
+			var label = $(this).text();  
+			dynamic_name_store['BarChart'] = $(this).text();
+	
+			barChart
+			.dimension(key_map[label].Dim)
+			.group(key_map[label].Group)
+			.x(d3.scale.ordinal().domain(key_map[label].Dim))
+			.xUnits(dc.units.ordinal)
+			.elasticX(true);
+			// .xAxisLabel(label)
+			barChart.focus(getKeys(key_map[label].Group));
+			barChart.filterAll(); dc.redrawAll();   
+			barChart.render();
+		});
 	});
 
+	
 	/**
 	 * JS to PDF report Printing (https://github.com/MrRio/jsPDF)
 	 * Convert all charts to svg and add to pdf
@@ -505,7 +548,6 @@ function makeGraphs(error, recordsJson) {
 
 								// Auto Print
 								doc.autoPrint();
-								// window.open(doc.output('bloburl'), '_blank');
 								doc.setProperties({
 									title: title
 									});
@@ -550,20 +592,48 @@ function makeGraphs(error, recordsJson) {
 		> depending on the selected filter --> filter the respective chart
 	*/
 
+	//Update the map if any dc chart get filtered
+	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
+		stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
+
+	dcChartsName = [['Date Range' , timeChartSmall], ['States', stateChart],['Districts', districtChart],
+		['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], ['Other Invertebrate', otherInvertebrateChart], 
+		['Temperature', temperatureChart], ['Humidity', humidityChart], ['BarChart', barChart], ['PieChart1',pieChart1],['PieChart2',pieChart2]];
+
 	var autocomplete_keys = [];
-	var group_key = "Phylum";
+	var group_key = "States";
 	autocomplete_keys = getKeys(phylumGroup);
 
-	$('#dropdown-menu-nav a').on('click', function(){    
-		$('#toggle-nav').html($(this).html() + ' <span class="caret"></span>'); 
-		// Fill up array 
-		group_key = $(this).text();
-		autocomplete_keys = getKeys(key_map[$(this).text()].Group);
-		$( "#search" ).autocomplete('option', 'source', autocomplete_keys)
+	
+	// Populate nav-filter-dropdown dynamically
+	$('#toggle-nav').on('click', function(){
+		//Make sure its empty
+		$('#dropdown-menu-nav').html(``);
+		var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+		for (const chartKeyPair of dcChartsName) {
+			var chartName = chartKeyPair[0];
+			if (chartName != 'Date Range') {
+				if (somearray.includes(chartName)) {
+					chartName = dynamic_name_store[chartName];
+				}
+				$('#dropdown-menu-nav').html($('#dropdown-menu-nav').html() + `<li><a>` + chartName + `</a></li>`);	
+			}
+		}
+
+		// Attach Click Listeners to Links.
+		$('#dropdown-menu-nav a').on('click', function(){    
+			$('#toggle-nav').html($(this).html() + ' <span class="caret"></span>'); 
+			// Fill up array 
+			group_key = $(this).text();
+			autocomplete_keys = getKeys(key_map[$(this).text()].Group);
+			$( "#search" ).autocomplete('option', 'source', autocomplete_keys)
+		});
+
 	});
 
 	function filterGroup(Dim, Key) {
-		Dim.filter(function(d) {return d === Key});
+		// Dim.filter(function(d) {return d === Key});
+		Dim.select(Key);
 		dc.renderAll();
 	}
 
@@ -571,7 +641,9 @@ function makeGraphs(error, recordsJson) {
 		let term = $('#search').data('uiAutocomplete').term;
 		//check if it is not null and matches the keys then filter 
 		if (term!=null && (term in autocomplete_keys)) {
-			filterGroup(key_map[group_key].Dim, term);
+			// filterGroup(key_map[group_key].Dim, term);
+			console.log(dcChartsName[group_key], term);
+			filterGroup(dcChartsName[group_key], term);
 		} 
 	});
 
@@ -582,7 +654,10 @@ function makeGraphs(error, recordsJson) {
 			deferRequestBy: 100, // This is to avoid js error on fast typing
 			select: function (event, ui) {
 				var label = ui.item.label;
-				filterGroup(key_map[group_key].Dim, label);
+				// filterGroup(key_map[group_key].Dim, label);
+				console.log(group_key, dcChartsName[group_key], label);
+				
+				filterGroup(dcChartsName[group_key], label);
 			}
 		});
 		
@@ -906,14 +981,7 @@ function makeGraphs(error, recordsJson) {
         return false;
 	}
 
-	//Update the heatmap if any dc chart get filtered
-	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
-		 stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
-
-	dcChartsName = [['Date Range' , timeChartSmall], ['States', stateChart],['Districts', districtChart],
-	  ['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], ['Other Invertebrate', otherInvertebrateChart], 
-	  ['Temperature', temperatureChart], ['Humidity', humidityChart], ['BarChart', barChart], ['PieChart1',pieChart1],['PieChart2',pieChart2]];
-	/* Turn off resizing for now */
+		/* Turn off resizing for now */
 	// _.each(dcCharts, function (dcChart) {
 	// 	apply_resizing(dcChart, 20);
 	// });
