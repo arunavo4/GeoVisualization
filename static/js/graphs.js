@@ -505,7 +505,11 @@ function makeGraphs(error, recordsJson) {
 
 								// Auto Print
 								doc.autoPrint();
-								window.open(doc.output('bloburl'), '_blank');
+								// window.open(doc.output('bloburl'), '_blank');
+								doc.setProperties({
+									title: title
+									});
+								window.open(URL.createObjectURL(doc.output("blob")))
 								$this.button('reset');
 							});
 
