@@ -166,28 +166,19 @@ function makeGraphs(error, recordsJson) {
 		.elasticY(true)
 		.yAxis().ticks(4);
 
-	barChart.on("postRender", function(chart) {
-		chart.select('.axis.x')
-				.attr("text-anchor", "end")
-				.selectAll("text")
-				.attr("transform", "rotate(-90)")
-				.attr("dy", "-0.7em")
-				.attr("dx", "+5em");
-		});
-
 	/*  Turn this part on to avoid the jump */
 
-	// barChart.on('pretransition', function(chart) {
-	// 	chart.select('.axis.x')
-	// 		// create stuff
-	// 		.transition().duration(chart.transitionDuration())
-	// 		// change stuff
-	// 		.attr("text-anchor", "end")
-	// 		.selectAll("text")
-	// 		.attr("transform", "rotate(-90)")
-	// 		.attr("dy", "-0.7em")
-	// 		.attr("dx", "+4em");
-	// });
+	barChart.on('pretransition', function(chart) {
+		chart.select('.axis.x')
+			// create stuff
+			.transition().duration(chart.transitionDuration())
+			// change stuff
+			.attr("text-anchor", "end")
+			.selectAll("text")
+			.attr("transform", "rotate(-90)")
+			.attr("dy", "-0.7em")
+			.attr("dx", "+5em");
+	});
 
 		// .xAxisLabel('Categories')
 
@@ -675,7 +666,6 @@ function makeGraphs(error, recordsJson) {
 				end = date;
 			}
 		}
-
 		timeChartSmall.filter(null);
 		timeChartSmall.filter(dc.filters.RangedFilter(start, end));
 		dc.redrawAll();
