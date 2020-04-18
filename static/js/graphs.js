@@ -245,7 +245,7 @@ function makeGraphs(error, recordsJson) {
 	entomofaunaChart
         .width(width)
 		.height(110)
-		.margins({top: 20, right: 30, bottom: 40, left: 30})
+		.margins({top: 10, right: 30, bottom: 40, left: 30})
         .dimension(entomofaunaDim)
         .group(entomofaunaGroup)
         .ordering(function(d) { return -d.value })
@@ -261,7 +261,7 @@ function makeGraphs(error, recordsJson) {
 	otherInvertebrateChart
         .width(width)
 		.height(110)
-		.margins({top: 20, right: 30, bottom: 40, left: 30})
+		.margins({top: 10, right: 30, bottom: 40, left: 30})
         .dimension(otherInvertebrateDim)
         .group(otherInvertebrateGroup)
         .ordering(function(d) { return -d.value })
@@ -277,7 +277,7 @@ function makeGraphs(error, recordsJson) {
 	vertebrateChart
         .width(width)
 		.height(110)
-		.margins({top: 20, right: 30, bottom: 40, left: 30})
+		.margins({top: 10, right: 30, bottom: 40, left: 30})
         .dimension(vertebrateDim)
         .group(vertebrateGroup)
         .ordering(function(d) { return -d.value })
@@ -293,7 +293,7 @@ function makeGraphs(error, recordsJson) {
 	habitatChart
 		.width(width)
 		.height(450)
-		.margins({top: 20, right: 20, bottom: 40, left: 30})
+		.margins({top: 10, right: 20, bottom: 40, left: 30})
         .dimension(habitatDim)
         .group(habitatGroup)
         .ordering(function(d) { return -d.value })
@@ -312,7 +312,7 @@ function makeGraphs(error, recordsJson) {
     stateChart
     	.width(stateDistWidth)
 		.height(980)
-		.margins({top: 20, right: 20, bottom: 40, left: 30})
+		.margins({top: 10, right: 20, bottom: 40, left: 30})
         .dimension(stateDim)
         .group(stateGroup)
         .ordering(function(d) { return -d.value })
@@ -329,7 +329,7 @@ function makeGraphs(error, recordsJson) {
 
 	districtChart
 		.width(stateDistWidth)
-		.margins({top: 20, right: 20, bottom: 40, left: 30})
+		.margins({top: 10, right: 20, bottom: 40, left: 30})
         .dimension(districtDim)
         .group(nonEmptyDistrict)
 		.ordering(function(d) { return -d.value })
@@ -400,7 +400,7 @@ function makeGraphs(error, recordsJson) {
 		
 	pieChart1
 		.width(width)
-		.height(190)
+		.height(192)
 		.dimension(key_map[dynamic_name_store["PieChart1"]].Dim)
         .group(key_map[dynamic_name_store["PieChart1"]].Group)
 		.label(function(d) {
@@ -410,7 +410,7 @@ function makeGraphs(error, recordsJson) {
 
 	pieChart2
 		.width(width)
-		.height(190)
+		.height(192)
 		.dimension(key_map[dynamic_name_store["PieChart2"]].Dim)
         .group(key_map[dynamic_name_store["PieChart2"]].Group)
 		.label(function(d) {
@@ -438,7 +438,7 @@ function makeGraphs(error, recordsJson) {
 			pieChart1.filter(null);
 			pieChart1
 				.width(width)
-				.height(190)
+				.height(192)
 				.dimension(key_map[$(this).text()].Dim)
 				.group(key_map[$(this).text()].Group)
 				.label(function(d) {
@@ -468,7 +468,7 @@ function makeGraphs(error, recordsJson) {
 			pieChart2.filter(null);
 			pieChart2
 				.width(width)
-				.height(190)
+				.height(192)
 				.dimension(key_map[$(this).text()].Dim)
 				.group(key_map[$(this).text()].Group)
 				.label(function(d) {
@@ -618,7 +618,7 @@ function makeGraphs(error, recordsJson) {
 						} 
 						var save
 						doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, y, 90, 120);
-						doc.text("Fig 3: Habitat Distribution", 40, y + 120, null, null, "left")
+						doc.text("Fig 3: Habitat Distribution", 40, y + 125, null, null, "left")
 
 						html2canvas($("#temp-stage")[0], { scale: 2 }).then(function(canvas) {
 							doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, y, 90, 50);
