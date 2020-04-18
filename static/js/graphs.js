@@ -669,7 +669,7 @@ function makeGraphs(error, recordsJson) {
 	var autocomplete_keys = [];
 	var group_key = "States";
 	autocomplete_keys = getKeys(stateGroup);
-
+	autocomplete_keys = autocomplete_keys.filter(function (e) {return e != null; });
 	
 	// Populate nav-filter-dropdown dynamically
 	$('#toggle-nav').on('click', function(){
@@ -689,11 +689,17 @@ function makeGraphs(error, recordsJson) {
 		// Attach Click Listeners to Links.
 		$('#dropdown-menu-nav a').on('click', function(){    
 			$('#toggle-nav').html($(this).html() + ' <span class="caret"></span>'); 
+			var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
 			// Fill up array 
 			group_key = $(this).text();
 			for (const keyPair of dcChartsName) {
-				if (keyPair[0] == group_key) {
+				var chartName = keyPair[0];
+				if (somearray.includes(chartName)) {
+					chartName = dynamic_name_store[chartName];
+				}
+				if (chartName == group_key) {
 					autocomplete_keys = getKeys(keyPair[1].group());
+					autocomplete_keys = autocomplete_keys.filter(function (e) {return e != null; }); 
 					break;
 				}
 			}
@@ -712,9 +718,13 @@ function makeGraphs(error, recordsJson) {
 		let term = $('#search').data('uiAutocomplete').term;
 		//check if it is not null and matches the keys then filter 
 		if (term!=null && autocomplete_keys.includes(term)) {
-			
+			var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
 			for (const keyPair of dcChartsName) {
-				if (keyPair[0] == group_key) {
+				var chartName = keyPair[0];
+				if (somearray.includes(chartName)) {
+					chartName = dynamic_name_store[chartName];
+				}
+				if (chartName == group_key) {
 					filterGroup(keyPair[1], term);
 					break;
 				}
@@ -728,8 +738,14 @@ function makeGraphs(error, recordsJson) {
 			deferRequestBy: 100, // This is to avoid js error on fast typing
 			select: function (event, ui) {
 				var label = ui.item.label;
+				var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+
 				for (const keyPair of dcChartsName) {
-					if (keyPair[0] == group_key) {
+					var chartName = keyPair[0];
+					if (somearray.includes(chartName)) {
+						chartName = dynamic_name_store[chartName];
+					}
+					if (chartName == group_key) {
 						filterGroup(keyPair[1], label);
 						break;
 					}
