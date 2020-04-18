@@ -107,6 +107,57 @@ function makeGraphs(error, recordsJson) {
 		}	
 	};
 
+	/**
+	 * In dc.js is that the dc.rowChart chart type does not inherit from
+	 * the dc.coordinateGridMin mixin and as a result, does not expose any
+	 * easy way of programmatically binding X- and Y-axis labels to the chart. 
+	 * 
+	 * Functions to add x-label & y-label to Row Charts (Unsupported by dc.js)
+	 */
+
+	var addXLabel = function(chartToUpdate, displayText) {
+	var textSelection = chartToUpdate.svg()
+				.append("text")
+				.style("font", "14px sans-serif")
+				.attr("class", "x-axis-label")
+				.attr("text-anchor", "middle")
+				.attr("x", chartToUpdate.width() / 2)
+				.attr("y", chartToUpdate.height() - 10)
+				.text(displayText);
+	var textDims = textSelection.node().getBBox();
+	var chartMargins = chartToUpdate.margins();
+	
+	// Dynamically adjust positioning after reading text dimension from DOM
+	textSelection
+		.attr("x", chartMargins.left + (chartToUpdate.width()
+			- chartMargins.left - chartMargins.right) / 2)
+		.attr("y", chartToUpdate.height());
+	};
+	var addYLabel = function(chartToUpdate, displayText) {
+	var textSelection = chartToUpdate.svg()
+				.append("text")
+				.style("font", "14px sans-serif")
+				.attr("class", "y-axis-label")
+				.attr("text-anchor", "middle")
+				.attr("transform", "rotate(-90)")
+				.attr("x", -chartToUpdate.height() / 2)
+				.attr("y", 10)
+				.text(displayText);
+	var textDims = textSelection.node().getBBox();
+	var chartMargins = chartToUpdate.margins();
+	
+	// Dynamically adjust positioning after reading text dimension from DOM
+	textSelection
+		.attr("x", -chartMargins.top - (chartToUpdate.height()
+			- chartMargins.top - chartMargins.bottom) / 2)
+		.attr("y", Math.max(Math.ceil(textDims.height), chartMargins.left
+			- Math.ceil(textDims.height) - 5));
+	};
+
+	//Labels
+	let Records_Label = 'No of Records';
+	let Distribution_label = 'Distribution of ';
+
 	// Place to Store the key-value pair for the 3 dropdown menu
 	var dynamic_name_store = {
 		'BarChart': 'Order',
@@ -128,26 +179,29 @@ function makeGraphs(error, recordsJson) {
 
 	timeChartSmall
 		.width(timeWidth)
-		.height(50)
-		.margins({top: 10, right: 10, bottom: 20, left: 20})
+		.height(70)
+		.margins({top: 10, right: 10, bottom: 30, left: 20})
 		.dimension(dateDim)
 		.brushOn(true)
 		.group(numRecordsByDate)
 		.transitionDuration(500)
 		.x(d3.time.scale().domain([minDate, maxDate]))
 		.elasticY(true)
+		.xAxisLabel('Range Selector')
 		.yAxis().ticks(4);
-
+	
 	timeChart
 		.width(timeWidth)
 		.height(140)
-		.margins({top: 10, right: 10, bottom: 20, left: 20})
+		.margins({top: 0, right: 10, bottom: 30, left: 20})
 		.dimension(dateDim)
 		// .renderArea(true)				// for area
 		.brushOn(false)
 		.x(d3.time.scale().domain([minDate, maxDate]))
 		.group(numRecordsByDate)
 		.elasticY(true)
+		.yAxisLabel(Records_Label)
+		.xAxisLabel('Date Range')
 		.transitionDuration(500)
 		.yAxis().ticks(4);
 
@@ -157,13 +211,15 @@ function makeGraphs(error, recordsJson) {
 	barChart
 		.width(timeWidth)
 		.height(140)
-		.margins({top: 10, right: 10, bottom: 20, left: 50})
+		.margins({top: 10, right: 10, bottom: 30, left: 50})
 		.dimension(key_map[dynamic_name_store["BarChart"]].Dim)
         .group(key_map[dynamic_name_store["BarChart"]].Group)
 		.colors(['#6baed6'])
 		.x(d3.scale.ordinal().domain(key_map[dynamic_name_store["BarChart"]].Dim)) 
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
+		.yAxisLabel(Records_Label)
+		.xAxisLabel(Distribution_label + dynamic_name_store["BarChart"])
 		.yAxis().ticks(4);
 
 	/*  Turn this part on to avoid the jump */
@@ -188,67 +244,106 @@ function makeGraphs(error, recordsJson) {
 
 	entomofaunaChart
         .width(width)
-        .height(100)
+		.height(110)
+		.margins({top: 20, right: 30, bottom: 40, left: 30})
         .dimension(entomofaunaDim)
         .group(entomofaunaGroup)
         .ordering(function(d) { return -d.value })
         // .colors(['#6baed6'])
-        .elasticX(true)
-        .xAxis().ticks(4);
+		.elasticX(true)
+		.xAxis().ticks(4);
+		
+	// Bind addXLabel & addYlabel as callbacks to postRender
+	entomofaunaChart.on("postRender", function(chart) {
+		addXLabel(chart, Records_Label);
+	});
 
 	otherInvertebrateChart
         .width(width)
-        .height(100)
+		.height(110)
+		.margins({top: 20, right: 30, bottom: 40, left: 30})
         .dimension(otherInvertebrateDim)
         .group(otherInvertebrateGroup)
         .ordering(function(d) { return -d.value })
         // .colors(['#6baed6'])
-        .elasticX(true)
+		.elasticX(true)
 		.xAxis().ticks(4);
+
+	// Bind addXLabel & addYlabel as callbacks to postRender
+	otherInvertebrateChart.on("postRender", function(chart) {
+		addXLabel(chart, Records_Label);
+	});
 		
 	vertebrateChart
         .width(width)
-        .height(100)
+		.height(110)
+		.margins({top: 20, right: 30, bottom: 40, left: 30})
         .dimension(vertebrateDim)
         .group(vertebrateGroup)
         .ordering(function(d) { return -d.value })
         // .colors(['#6baed6'])
-        .elasticX(true)
-        .xAxis().ticks(4);
+		.elasticX(true)
+		.xAxis().ticks(4);
+		
+	// Bind addXLabel & addYlabel as callbacks to postRender
+	vertebrateChart.on("postRender", function(chart) {
+		addXLabel(chart, Records_Label);
+	  });
 	
 	habitatChart
 		.width(width)
-		.height(420)
+		.height(450)
+		.margins({top: 20, right: 20, bottom: 40, left: 30})
         .dimension(habitatDim)
         .group(habitatGroup)
         .ordering(function(d) { return -d.value })
         // .colors(['#6baed6'])
-        .elasticX(true)
+		.elasticX(true)
 		.xAxis().ticks(4);
+
+	// Bind addXLabel & addYlabel as callbacks to postRender
+	habitatChart.on("postRender", function(chart) {
+		addXLabel(chart, Records_Label);
+		addYLabel(chart, 'Habitats');
+	  });
 		
 	var stateDistWidth =  document.getElementById('state-stage').offsetWidth;
 
     stateChart
     	.width(stateDistWidth)
-		.height(950)
+		.height(980)
+		.margins({top: 20, right: 20, bottom: 40, left: 30})
         .dimension(stateDim)
         .group(stateGroup)
         .ordering(function(d) { return -d.value })
         // .colors(['#6baed6'])
-        .elasticX(true)
+		.elasticX(true)
         .labelOffsetY(10)
 		.xAxis().ticks(4);
 
+	// Bind addXLabel & addYlabel as callbacks to postRender
+	stateChart.on("postRender", function(chart) {
+		addXLabel(chart, Records_Label);
+		addYLabel(chart, 'States');
+	  });
+
 	districtChart
-    	.width(stateDistWidth)
+		.width(stateDistWidth)
+		.margins({top: 20, right: 20, bottom: 40, left: 30})
         .dimension(districtDim)
         .group(nonEmptyDistrict)
 		.ordering(function(d) { return -d.value })
 		.label(function (d) { return String(d.key).split('_')[1]; })
         // .colors(['#6baed6'])
-        .elasticX(true)
+		.elasticX(true)
 		.labelOffsetY(10)
 		.xAxis().ticks(4);
+
+	// Bind addXLabel & addYlabel as callbacks to postRender
+	districtChart.on("postRender", function(chart) {
+		addXLabel(chart, Records_Label);
+		addYLabel(chart, 'Districts');
+	  });
 
 	function updateChartHeight(chart, minHeight) {
 		/*
@@ -273,35 +368,39 @@ function makeGraphs(error, recordsJson) {
 		return array;
 	}
 	
-	updateChartHeight(districtChart, 950);	
+	updateChartHeight(districtChart, 980);	
 		
 	temperatureChart
 		.width(width)
-		.height(180)
-		.margins({top: 10, right: 20, bottom: 20, left: 40})
+		.height(195)
+		.margins({top: 10, right: 20, bottom: 40, left: 40})
         .dimension(temperatureDim)
         .group(temperatureGroup)
 		// .colors(['#6baed6'])
 		.x(d3.scale.ordinal().domain(temperatureDim)) 
   		.xUnits(dc.units.ordinal)
-        .elasticY(true)
-        .yAxis().ticks(4);
+		.elasticY(true)
+		.xAxisLabel(Distribution_label + 'Temperature')
+		.yAxisLabel(Records_Label)
+		.yAxis().ticks(4);
 
 	humidityChart
 		.width(width)
-		.height(180)
-		.margins({top: 10, right: 20, bottom: 20, left: 40})
+		.height(195)
+		.margins({top: 10, right: 20, bottom: 40, left: 40})
         .dimension(humidityDim)
         .group(humidityGroup)
 		// .colors(['#6baed6'])
 		.x(d3.scale.ordinal().domain(humidityDim)) 
   		.xUnits(dc.units.ordinal)
-        .elasticY(true)
+		.elasticY(true)
+		.xAxisLabel(Distribution_label + 'Humidity')
+		.yAxisLabel(Records_Label)
 		.yAxis().ticks(4);
 		
 	pieChart1
 		.width(width)
-		.height(178)
+		.height(190)
 		.dimension(key_map[dynamic_name_store["PieChart1"]].Dim)
         .group(key_map[dynamic_name_store["PieChart1"]].Group)
 		.label(function(d) {
@@ -311,7 +410,7 @@ function makeGraphs(error, recordsJson) {
 
 	pieChart2
 		.width(width)
-		.height(178)
+		.height(190)
 		.dimension(key_map[dynamic_name_store["PieChart2"]].Dim)
         .group(key_map[dynamic_name_store["PieChart2"]].Group)
 		.label(function(d) {
@@ -339,7 +438,7 @@ function makeGraphs(error, recordsJson) {
 			pieChart1.filter(null);
 			pieChart1
 				.width(width)
-				.height(178)
+				.height(190)
 				.dimension(key_map[$(this).text()].Dim)
 				.group(key_map[$(this).text()].Group)
 				.label(function(d) {
@@ -369,7 +468,7 @@ function makeGraphs(error, recordsJson) {
 			pieChart2.filter(null);
 			pieChart2
 				.width(width)
-				.height(178)
+				.height(190)
 				.dimension(key_map[$(this).text()].Dim)
 				.group(key_map[$(this).text()].Group)
 				.label(function(d) {
@@ -401,8 +500,9 @@ function makeGraphs(error, recordsJson) {
 				.group(key_map[label].Group)
 				.x(d3.scale.ordinal().domain(key_map[label].Dim))
 				.xUnits(dc.units.ordinal)
-				.elasticX(true);
-			// .xAxisLabel(label)
+				.elasticX(true)		
+				.yAxisLabel(Records_Label)
+				.xAxisLabel(Distribution_label + dynamic_name_store["BarChart"]);
 			// barChart.focus(getKeys(key_map[label].Group));	//hack Not required 
 			barChart.filterAll(); dc.redrawAll();   
 			// barChart.render();
@@ -1057,7 +1157,7 @@ function makeGraphs(error, recordsJson) {
 					reset_geojson_state();
 					reset_geojson_district();
 				}
-				// updateChartHeight(districtChart, 950);
+				// updateChartHeight(districtChart, 980);
 			}
 			else if (chart==districtChart) {
 				if (filter!=null){
@@ -1071,7 +1171,7 @@ function makeGraphs(error, recordsJson) {
 				}
 			}
 			// Got to update chart height at all instances
-			updateChartHeight(districtChart, 950);
+			updateChartHeight(districtChart, 980);
 
 			// Get active layers before deleting them
 			var active = layerControl.getOverlays();
