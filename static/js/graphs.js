@@ -201,7 +201,7 @@ function makeGraphs(error, recordsJson) {
         .dimension(entomofaunaDim)
         .group(entomofaunaGroup)
         .ordering(function(d) { return -d.value })
-        .colors(['#6baed6'])
+        // .colors(['#6baed6'])
         .elasticX(true)
         .xAxis().ticks(4);
 
@@ -211,7 +211,7 @@ function makeGraphs(error, recordsJson) {
         .dimension(otherInvertebrateDim)
         .group(otherInvertebrateGroup)
         .ordering(function(d) { return -d.value })
-        .colors(['#6baed6'])
+        // .colors(['#6baed6'])
         .elasticX(true)
 		.xAxis().ticks(4);
 		
@@ -221,7 +221,7 @@ function makeGraphs(error, recordsJson) {
         .dimension(vertebrateDim)
         .group(vertebrateGroup)
         .ordering(function(d) { return -d.value })
-        .colors(['#6baed6'])
+        // .colors(['#6baed6'])
         .elasticX(true)
         .xAxis().ticks(4);
 	
@@ -231,7 +231,7 @@ function makeGraphs(error, recordsJson) {
         .dimension(habitatDim)
         .group(habitatGroup)
         .ordering(function(d) { return -d.value })
-        .colors(['#6baed6'])
+        // .colors(['#6baed6'])
         .elasticX(true)
 		.xAxis().ticks(4);
 		
@@ -243,7 +243,7 @@ function makeGraphs(error, recordsJson) {
         .dimension(stateDim)
         .group(stateGroup)
         .ordering(function(d) { return -d.value })
-        .colors(['#6baed6'])
+        // .colors(['#6baed6'])
         .elasticX(true)
         .labelOffsetY(10)
 		.xAxis().ticks(4);
@@ -254,7 +254,7 @@ function makeGraphs(error, recordsJson) {
         .group(nonEmptyDistrict)
 		.ordering(function(d) { return -d.value })
 		.label(function (d) { return String(d.key).split('_')[1]; })
-        .colors(['#6baed6'])
+        // .colors(['#6baed6'])
         .elasticX(true)
 		.labelOffsetY(10)
 		.xAxis().ticks(4);
@@ -287,10 +287,10 @@ function makeGraphs(error, recordsJson) {
 	temperatureChart
 		.width(width)
 		.height(180)
-		.margins({top: 10, right: 10, bottom: 20, left: 50})
+		.margins({top: 10, right: 20, bottom: 20, left: 40})
         .dimension(temperatureDim)
         .group(temperatureGroup)
-		.colors(['#6baed6'])
+		// .colors(['#6baed6'])
 		.x(d3.scale.ordinal().domain(temperatureDim)) 
   		.xUnits(dc.units.ordinal)
         .elasticY(true)
@@ -299,10 +299,10 @@ function makeGraphs(error, recordsJson) {
 	humidityChart
 		.width(width)
 		.height(180)
-		.margins({top: 10, right: 20, bottom: 20, left: 50})
+		.margins({top: 10, right: 20, bottom: 20, left: 40})
         .dimension(humidityDim)
         .group(humidityGroup)
-		.colors(['#6baed6'])
+		// .colors(['#6baed6'])
 		.x(d3.scale.ordinal().domain(humidityDim)) 
   		.xUnits(dc.units.ordinal)
         .elasticY(true)
@@ -659,22 +659,26 @@ function makeGraphs(error, recordsJson) {
 
 	function changeDateToISO(date) {
 		var date = String(date).split('/');
-		return date[2]+'-'+date[1]+'-'+date[0];
+		return new Date(date[2]+'-'+date[1]+'-'+date[0]);
 	}
 
 	$('#filter_date_range').on('click', function(){ 
-
-		console.log(changeDateToISO( $('#inputdatestart').val()));
-		console.log(changeDateToISO( $('#inputdateend').val()));
-		console.log(dc);
-		console.log(timeChartSmall.filters());
+		var start = changeDateToISO( $('#inputdatestart').val());
+		var end = changeDateToISO( $('#inputdateend').val());
+		var chartGroup = getKeys(timeChartSmall.group());
+		for (const date of chartGroup) {
+			if (formatDate(date) === formatDate(start)) {
+				start = date;
+			}
+			else if(formatDate(date) === formatDate(end)){
+				end = date;
+			}
+		}
 
 		timeChartSmall.filter(null);
-		timeChartSmall.filter(dc.filters.RangedFilter(new Date(changeDateToISO( $('#inputdatestart').val())), 
-		// 												new Date(changeDateToISO( $('#inputdateend').val()))));
-		// dc.redrawAll();
-				
-		// dc.renderAll();dc.redrawAll();
+		timeChartSmall.filter(dc.filters.RangedFilter(start, end));
+		dc.redrawAll();
+		// dc.renderAll();
 	});
 
 	$('.form_date').datetimepicker({
