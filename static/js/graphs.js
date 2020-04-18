@@ -697,6 +697,27 @@ function makeGraphs(error, recordsJson) {
 		$('#inputdateend').attr('readonly', readonly).val(formatDate(end));
 	}
 
+	$('.form_date').datetimepicker({
+        // language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0
+	});
+	$('.form_date').datetimepicker({
+        // language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0
+    });
+
 	updateRange(minDate, maxDate);
 	
 	var latlng = L.latLng(23.07, 80.01);
