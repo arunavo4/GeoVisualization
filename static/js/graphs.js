@@ -610,7 +610,8 @@ function makeGraphs(error, recordsJson) {
 
 	function filterGroup(chart, key) {
 		chart.filter(key);
-		dc.renderAll();dc.redrawAll();
+		dc.redrawAll();
+		// dc.renderAll();
 	}
 
 	$('#filter').on('click', function(){ 
