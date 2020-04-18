@@ -104,31 +104,7 @@ function makeGraphs(error, recordsJson) {
 		Genus: {
 			Dim: genusDim,
 			Group: remove_empty_bins(genusGroup)
-		}
-		// States : {
-		// 	Dim: stateDim,
-		// 	Group: stateGroup
-		// },
-		// Districts : {
-		// 	Dim: districtDim,
-		// 	Group: districtGroup
-		// },
-		// Habitats : {
-		// 	Dim: habitatDim,
-		// 	Group: habitatGroup
-		// },
-		// Habitats : {
-		// 	Dim: habitatDim,
-		// 	Group: habitatGroup
-		// },
-		// Habitats : {
-		// 	Dim: habitatDim,
-		// 	Group: habitatGroup
-		// },
-		// Habitats : {
-		// 	Dim: habitatDim,
-		// 	Group: habitatGroup
-		// },
+		}	
 	};
 
 	// Place to Store the key-value pair for the 3 dropdown menu
@@ -580,22 +556,6 @@ function makeGraphs(error, recordsJson) {
 	});
 	
 
-	// $(function () {
-	// 	$('inputdatestart').datepicker({format: "dd/mm/yyyy"}); 
-	// 	$('inputdateend').datepicker({format: "dd/mm/yyyy"}); 
-
-	// 	// $('#datetimepicker6').datetimepicker();
-    //     // $('#datetimepicker7').datetimepicker({
-    //     //     useCurrent: false //Important! See issue #1075
-    //     // });
-    //     // $("#datetimepicker6").on("dp.change", function (e) {
-    //     //     $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
-    //     // });
-    //     // $("#datetimepicker7").on("dp.change", function (e) {
-    //     //     $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
-    //     // });
-	// });
-
 	/*
 		> Collect data from all the groups
 			_each.group.all()	| [State, District, Habitat, Phylum, Class, Order, Family, Genus]
@@ -697,10 +657,29 @@ function makeGraphs(error, recordsJson) {
 		$('#inputdateend').attr('readonly', readonly).val(formatDate(end));
 	}
 
+	function changeDateToISO(date) {
+		var date = String(date).split('/');
+		return date[2]+'-'+date[1]+'-'+date[0];
+	}
+
+	$('#filter_date_range').on('click', function(){ 
+
+		console.log(changeDateToISO( $('#inputdatestart').val()));
+		console.log(changeDateToISO( $('#inputdateend').val()));
+		console.log(dc);
+		console.log(timeChartSmall.filters());
+
+		timeChartSmall.filter(null);
+		timeChartSmall.filter(dc.filters.RangedFilter(new Date(changeDateToISO( $('#inputdatestart').val())), 
+		// 												new Date(changeDateToISO( $('#inputdateend').val()))));
+		// dc.redrawAll();
+				
+		// dc.renderAll();dc.redrawAll();
+	});
+
 	$('.form_date').datetimepicker({
-        // language:  'fr',
         weekStart: 1,
-        todayBtn:  1,
+        todayBtn:  0,
 		autoclose: 1,
 		todayHighlight: 1,
 		startView: 2,
@@ -708,9 +687,8 @@ function makeGraphs(error, recordsJson) {
 		forceParse: 0
 	});
 	$('.form_date').datetimepicker({
-        // language:  'fr',
         weekStart: 1,
-        todayBtn:  1,
+        todayBtn:  0,
 		autoclose: 1,
 		todayHighlight: 1,
 		startView: 2,
@@ -718,6 +696,9 @@ function makeGraphs(error, recordsJson) {
 		forceParse: 0
     });
 
+	// Set the Min and Max Date
+	$('.form_date').datetimepicker('setStartDate', formatDate(minDate));
+	$('.form_date').datetimepicker('setEndDate', formatDate(maxDate));
 	updateRange(minDate, maxDate);
 	
 	var latlng = L.latLng(23.07, 80.01);
@@ -1023,7 +1004,7 @@ function makeGraphs(error, recordsJson) {
         return false;
 	}
 
-		/* Turn off resizing for now */
+	/* Turn off resizing for now */
 	// _.each(dcCharts, function (dcChart) {
 	// 	apply_resizing(dcChart, 20);
 	// });

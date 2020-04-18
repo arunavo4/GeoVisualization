@@ -226,7 +226,7 @@
               <div class="chart-wrapper">
                 <div class="chart-title">
                   <div class="row therow" >
-                    <div class='col-sm-8' id="datetitle">
+                    <div class='col-sm-7' id="datetitle">
                       <div class="row therow">
                         <div class='col-sm-6' id="datetitle">
                           <!-- Single button Dropdown-->
@@ -248,14 +248,14 @@
                       </div>
                     </div>
                     <!-- The date area -->
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                       <div class="row therow">
                         <div class="container-fluid" style="padding: 0px;">
                           <div class="row therow">
-                            
-                            <div class='col-sm-6' id='datestart'>
+
+                            <div class='col-sm-5' id='datestart'>
                               <div class="form-group">
-                                <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                                <div class="input-group date form_date" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
                                     <input class="form-control" id='inputdatestart' size="14" type="text" value="" readonly>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                 </div>
@@ -263,14 +263,18 @@
                               </div>
                             </div>
 
-                            <div class='col-sm-6' id='dateend'>
+                            <div class='col-sm-5' id='dateend'>
                               <div class="form-group">
-                                <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input3" data-link-format="yyyy-mm-dd">
+                                <div class="input-group date form_date" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input3" data-link-format="yyyy-mm-dd">
                                     <input class="form-control" id='inputdateend' size="14" type="text" value="" readonly>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                 </div>
                                 <input type="hidden" id="dtp_input3" value="" /><br/>
                               </div>
+                            </div>
+
+                            <div class="col-sm-2" id='dateend'>
+                              <button class="btn btn-primary" type="button" id="filter_date_range">Filter</button>
                             </div>
 
                           </div>
