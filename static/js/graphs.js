@@ -1057,7 +1057,7 @@ function makeGraphs(error, recordsJson) {
 					reset_geojson_state();
 					reset_geojson_district();
 				}
-				updateChartHeight(districtChart, 950);
+				// updateChartHeight(districtChart, 950);
 			}
 			else if (chart==districtChart) {
 				if (filter!=null){
@@ -1070,6 +1070,9 @@ function makeGraphs(error, recordsJson) {
 					reset_geojson_district();
 				}
 			}
+			// Got to update chart height at all instances
+			updateChartHeight(districtChart, 950);
+
 			// Get active layers before deleting them
 			var active = layerControl.getOverlays();
 
