@@ -336,6 +336,7 @@ function makeGraphs(error, recordsJson) {
 			$('#toggle-1').html($(this).html() + ' <span class="caret"></span>');
 			dynamic_name_store['PieChart1'] = $(this).text();
 	
+			pieChart1.filter(null);
 			pieChart1
 				.width(width)
 				.height(178)
@@ -365,6 +366,7 @@ function makeGraphs(error, recordsJson) {
 			$('#toggle-2').html($(this).html() + ' <span class="caret"></span>');  
 			dynamic_name_store['PieChart2'] = $(this).text();
 	
+			pieChart2.filter(null);
 			pieChart2
 				.width(width)
 				.height(178)
@@ -393,16 +395,17 @@ function makeGraphs(error, recordsJson) {
 			var label = $(this).text();  
 			dynamic_name_store['BarChart'] = $(this).text();
 	
+			barChart.filter(null);
 			barChart
-			.dimension(key_map[label].Dim)
-			.group(key_map[label].Group)
-			.x(d3.scale.ordinal().domain(key_map[label].Dim))
-			.xUnits(dc.units.ordinal)
-			.elasticX(true);
+				.dimension(key_map[label].Dim)
+				.group(key_map[label].Group)
+				.x(d3.scale.ordinal().domain(key_map[label].Dim))
+				.xUnits(dc.units.ordinal)
+				.elasticX(true);
 			// .xAxisLabel(label)
-			barChart.focus(getKeys(key_map[label].Group));
+			// barChart.focus(getKeys(key_map[label].Group));	//hack Not required 
 			barChart.filterAll(); dc.redrawAll();   
-			barChart.render();
+			// barChart.render();
 		});
 	});
 
