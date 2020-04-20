@@ -625,14 +625,14 @@ function makeGraphs(error, recordsJson) {
 
 							html2canvas($("#humidity-stage")[0], { scale: 2 }).then(function(canvas) {
 								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, y + 65, 90, 50);
-								doc.text("Fig 5: Humidity Distribution", 130, y + 55 + 65, null, null, "left")
+								doc.text("Fig 5: Humidity Distribution", 130, y + 120, null, null, "left")
 
 								// Add RRSC, Kolkata w/ Logo and Zsi with Logo
-								doc.text("RRSC-East, NRSC Kolkata",  25, y + 240, null, null, "left");
-								doc.addImage(isro_logo, 'PNG', 75, y + 232, 15, 15);
+								doc.text("RRSC-East, NRSC Kolkata",  25, 280, null, null, "left");
+								doc.addImage(isro_logo, 'PNG', 75, 272, 15, 15);
 
-								doc.text("ZSI-Kolkata", 140, y + 240, null, null, "left")
-								doc.addImage(zsi_logo, 'PNG', 165, y + 232, 15, 15);
+								doc.text("ZSI-Kolkata", 140, 280, null, null, "left")
+								doc.addImage(zsi_logo, 'PNG', 165, 272, 15, 15);
 
 								// Auto Print
 								doc.autoPrint();
@@ -1151,6 +1151,8 @@ function makeGraphs(error, recordsJson) {
 			if(chartName == 'Districts'){
 				filters = filters.map(x => String(x).split('_')[1]);
 			}
+			// Remove null values
+			filters = filters.filter(function (e) {return e != null; }); 
 			array.push([chartName, filters]);
 		});
 		return array; 
