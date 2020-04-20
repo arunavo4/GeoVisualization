@@ -627,6 +627,13 @@ function makeGraphs(error, recordsJson) {
 								doc.addImage(canvas.toDataURL("image/png"), 'PNG', 105, y + 65, 90, 50);
 								doc.text("Fig 5: Humidity Distribution", 130, y + 55 + 65, null, null, "left")
 
+								// Add RRSC, Kolkata w/ Logo and Zsi with Logo
+								doc.text("RRSC-East, NRSC Kolkata",  25, y + 240, null, null, "left");
+								doc.addImage(isro_logo, 'PNG', 75, y + 232, 15, 15);
+
+								doc.text("ZSI-Kolkata", 140, y + 240, null, null, "left")
+								doc.addImage(zsi_logo, 'PNG', 165, y + 232, 15, 15);
+
 								// Auto Print
 								doc.autoPrint();
 								doc.setProperties({
@@ -1048,7 +1055,7 @@ function makeGraphs(error, recordsJson) {
 			
 			function showMarkerData(e){
 				var data =  e.target.data;
-				document.getElementById("sidebar-title").innerHTML += `UNIQUE ID: ` + data.UniqueSurveyID;
+				document.getElementById("sidebar-title").innerHTML = `UNIQUE ID: ` + data.UniqueSurveyID;
 
 				if (data.ImageAnimal != null) {
 					document.getElementById("ImageAnimal").src = data.ImageAnimal;

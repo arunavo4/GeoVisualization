@@ -75,6 +75,7 @@ def main():
     df_app['Order'] = df_them['Order']
     df_app['Family'] = df_them['Family']
     df_app['Genus'] = df_them['Genus']
+    df_app['Species'] = df_them['Species']
 
     df_app['NoOfExamples'] = df_them['No. of exs.']
 
