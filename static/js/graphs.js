@@ -156,7 +156,6 @@ function makeGraphs(error, recordsJson) {
 
 	//Labels
 	let Records_Label = 'No of Records';
-	let Distribution_label = 'Distribution of ';
 
 	// Place to Store the key-value pair for the 3 dropdown menu
 	var dynamic_name_store = {
@@ -219,7 +218,7 @@ function makeGraphs(error, recordsJson) {
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
 		.yAxisLabel(Records_Label)
-		.xAxisLabel(Distribution_label + dynamic_name_store["BarChart"])
+		.xAxisLabel(dynamic_name_store["BarChart"])
 		.yAxis().ticks(4);
 
 	/*  Turn this part on to avoid the jump */
@@ -380,7 +379,7 @@ function makeGraphs(error, recordsJson) {
 		.x(d3.scale.ordinal().domain(temperatureDim)) 
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
-		.xAxisLabel(Distribution_label + 'Temperature')
+		.xAxisLabel('Temperature')
 		.yAxisLabel(Records_Label)
 		.yAxis().ticks(4);
 
@@ -394,7 +393,7 @@ function makeGraphs(error, recordsJson) {
 		.x(d3.scale.ordinal().domain(humidityDim)) 
   		.xUnits(dc.units.ordinal)
 		.elasticY(true)
-		.xAxisLabel(Distribution_label + 'Humidity')
+		.xAxisLabel('Humidity')
 		.yAxisLabel(Records_Label)
 		.yAxis().ticks(4);
 		
@@ -502,7 +501,7 @@ function makeGraphs(error, recordsJson) {
 				.xUnits(dc.units.ordinal)
 				.elasticX(true)		
 				.yAxisLabel(Records_Label)
-				.xAxisLabel(Distribution_label + dynamic_name_store["BarChart"]);
+				.xAxisLabel(dynamic_name_store["BarChart"]);
 			// barChart.focus(getKeys(key_map[label].Group));	//hack Not required 
 			barChart.filterAll(); dc.redrawAll();   
 			// barChart.render();
