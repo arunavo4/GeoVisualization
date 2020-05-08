@@ -49,7 +49,7 @@
                     <!-- Single button Dropdown-->
                     <input type="text" class="form-control" id="search">
                     <span class="input-group-btn">
-                      <button class="btn btn-default" type="button" id="filter">Filter</button>
+                      <button class="btn btn-default" type="button" id="filter">Search</button>
                     </span>
                   </div><!-- /input-group -->
                 </div>
@@ -164,7 +164,7 @@
     <div class="row">
 
       <!-- First View Page -->
-      <!-- States-Map-dateSlider-Counter -->
+      <!-- States-Map-date Slider-Counter -->
       <div class="row">
 
         <div class="col-sm-2">
@@ -188,7 +188,7 @@
                     </div>
                     <div id="tab2" class="tab-pane fade">
                       <div class="chart-stage" id="district-stage">
-                        <div id="district-row-chart" style="overflow-y: auto; height: 950px;"></div>
+                        <div id="district-row-chart" style="overflow-y: auto; height: 1030px;"></div>
                       </div>
                     </div>
                   </div>                
@@ -230,7 +230,7 @@
                       <div class="row therow">
                         <div class='col-sm-6' id="datetitle">
                           <!-- Single button Dropdown-->
-                          <div class="btn-group">
+                          <!-- <div class="btn-group">
                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" id="toggle-3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               Order <span class="caret"></span>
                             </button>
@@ -241,7 +241,7 @@
                               <li><a>Family</a></li>
                               <li><a>Genus</a></li>
                             </ul>
-                          </div>
+                          </div> -->
                           <!-- Single button Dropdown-->
                         </div>
                         <div class='col-sm-6' id="number-records-nd">Number of Records: </div>
@@ -286,9 +286,9 @@
                 </div>
                 <div class="chart-stage">
                   <div id="timeline-stage">
-                    <div class="chart-stage">
+                    <!-- <div class="chart-stage">
                       <div id="dynamic-bar-chart" ></div>
-                    </div>
+                    </div> -->
                     <div class="chart-stage">
                       <div id="time-chart"></div>
                     </div>
@@ -300,10 +300,53 @@
               </div>
             </div>
             <!-- Time Chart --> 
+
+            <!-- The Family Tabs -->
+            <div class="col-sm-12">
+              <div class="chart-wrapper">
+                <!-- Tabs -->
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#phylum">Phylum</a></li>
+                    <li><a data-toggle="tab" href="#class">Class</a></li>
+                    <li><a data-toggle="tab" href="#order">Order</a></li>
+                    <li><a data-toggle="tab" href="#family">Family</a></li>
+                    <li><a data-toggle="tab" href="#genus">Genus</a></li>
+                  </ul>
+                  <!-- Tabs -->
+                  <!-- Tab-content -->
+                  <div class="tab-content">
+                    <div id="phylum" class="tab-pane fade in active">
+                      <div class="chart-stage" id="phylum-stage">
+                        <div id="phylum-bar-chart"></div>
+                      </div>
+                    </div>
+                    <div id="class" class="tab-pane fade">
+                      <div class="chart-stage" id="class-stage">
+                        <div id="class-bar-chart" style="overflow-x: auto; width: 1080px;"></div>
+                      </div>
+                    </div>
+                    <div id="order" class="tab-pane fade">
+                      <div class="chart-stage" id="order-stage">
+                        <div id="order-bar-chart" style="overflow-x: auto; width: 1080px;"></div>
+                      </div>
+                    </div>
+                    <div id="family" class="tab-pane fade">
+                      <div class="chart-stage" id="family-stage">
+                        <div id="family-bar-chart" style="overflow-x: auto; width: 1080px;"></div>
+                      </div>
+                    </div>
+                    <div id="genus" class="tab-pane fade">
+                      <div class="chart-stage" id="genus-stage">
+                        <div id="genus-bar-chart" style="overflow-x: auto; width: 1080px;"></div>
+                      </div>
+                    </div>
+                  </div>                
+                  <!-- Tab-content -->
+              </div>
+            </div>
+            <!-- The Family Tabs -->
           </div>
-
         </div>  
-
       </div>
       <!-- First View Page -->
 
@@ -466,12 +509,8 @@
                       </ul>
                     </div>
                     <!-- Single button Dropdown-->
-                    <span>
-                      <a class="reset"
-                        href="javascript:pieChart1.filterAll();dc.redrawAll();"
-                        style="display: none;">
-                        reset
-                      </a>
+                    <span class="text-secondary" style="float: right">
+                        Filter disabled
                     </span>
                   </div>
                   <div class="chart-stage" id="pie-1-stage">
@@ -497,13 +536,9 @@
                       </ul>
                     </div>
                     <!-- Single button Dropdown-->
-                    <span>
-                      <a class="reset"
-                        href="javascript:pieChart2.filterAll();dc.redrawAll();"
-                        style="display: none;">
-                        reset
-                      </a>
-                    </span>
+                  <span class="text-secondary" style="float: right">
+                      Filter disabled
+                  </span>
                   </div>
                   <div class="chart-stage" id="pie-2-stage">
                     <div id="dynamic-pie-chart-2"></div>

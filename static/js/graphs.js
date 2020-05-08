@@ -55,11 +55,11 @@ function makeGraphs(error, recordsJson) {
 	var districtGroup = districtDim.group();
 	var temperatureGroup = temperatureDim.group();
 	var humidityGroup = humidityDim.group();
-	var phylumGroup = phylumDim.group();
-	var classGroup = classDim.group();
-	var orderGroup = orderDim.group();
-	var familyGroup = familyDim.group();
-	var genusGroup = genusDim.group();
+	var phylumGroup = remove_empty_bins(phylumDim.group());
+	var classGroup = remove_empty_bins(classDim.group());
+	var orderGroup = remove_empty_bins(orderDim.group());
+	var familyGroup = remove_empty_bins(familyDim.group());
+	var genusGroup = remove_empty_bins(genusDim.group());
 	var all = ndx.groupAll();
 	var nonEmptyDistrict = remove_empty_bins(districtGroup);
 	var nonEmptyDate = remove_empty_bins(numRecordsByDate);
@@ -70,7 +70,11 @@ function makeGraphs(error, recordsJson) {
 
     //Charts
     var numberRecordsND = dc.numberDisplay("#number-records-nd");
-	var barChart = dc.barChart("#dynamic-bar-chart");
+	var phylumBarChart = dc.barChart("#phylum-bar-chart");
+	var classBarChart = dc.barChart("#class-bar-chart");
+	var orderBarChart = dc.barChart("#order-bar-chart");
+	var familyBarChart = dc.barChart("#family-bar-chart");
+	var genusBarChart = dc.barChart("#genus-bar-chart");
 	var timeChartSmall = dc.barChart("#time-chart-overview");
 	var timeChart = dc.barChart("#time-chart");
 	var entomofaunaChart = dc.rowChart("#entomofauna-row-chart");
@@ -87,23 +91,23 @@ function makeGraphs(error, recordsJson) {
 	var key_map = {
 		Phylum: {
 			Dim: phylumDim,
-			Group: remove_empty_bins(phylumGroup)
+			Group: phylumGroup
 		},
 		Class: {
 			Dim: classDim,
-			Group: remove_empty_bins(classGroup)
+			Group: classGroup
 		},
 		Order: {
 			Dim: orderDim,
-			Group: remove_empty_bins(orderGroup)
+			Group: orderGroup
 		},
 		Family: {
 			Dim: familyDim,
-			Group: remove_empty_bins(familyGroup)
+			Group: familyGroup
 		},
 		Genus: {
 			Dim: genusDim,
-			Group: remove_empty_bins(genusGroup)
+			Group: genusGroup
 		}	
 	};
 
@@ -159,11 +163,11 @@ function makeGraphs(error, recordsJson) {
 
 	// Place to Store the key-value pair for the 3 dropdown menu
 	var dynamic_name_store = {
-		'BarChart': 'Order',
+		// 'BarChart': 'Order',
 		'PieChart1': 'Phylum',
 		'PieChart2': 'Class'
 	}
-	$('#toggle-3').html(dynamic_name_store['BarChart'] + ' <span class="caret"></span>');
+	// $('#toggle-3').html(dynamic_name_store['BarChart'] + ' <span class="caret"></span>');
 	$('#toggle-1').html(dynamic_name_store['PieChart1'] + ' <span class="caret"></span>');
 	$('#toggle-2').html(dynamic_name_store['PieChart2'] + ' <span class="caret"></span>');
 
@@ -207,35 +211,54 @@ function makeGraphs(error, recordsJson) {
 		// .round(d3.time.day)
 		// .xUnits(d3.time.day)
 
-	barChart
-		.width(timeWidth)
-		.height(140)
-		.margins({top: 10, right: 10, bottom: 30, left: 50})
-		.dimension(key_map[dynamic_name_store["BarChart"]].Dim)
-        .group(key_map[dynamic_name_store["BarChart"]].Group)
-		.colors(['#6baed6'])
-		.x(d3.scale.ordinal().domain(key_map[dynamic_name_store["BarChart"]].Dim)) 
-  		.xUnits(dc.units.ordinal)
-		.elasticY(true)
-		.yAxisLabel(Records_Label)
-		.xAxisLabel(dynamic_name_store["BarChart"])
-		.yAxis().ticks(4);
+	function updateChartWidth(chart, minWidth) {
+	
+		var N = chart.group().all().length;
+		var width = 15, gap = 5;
+		var height = width*N + gap*(N+1);
+		chart
+			.width((height > minWidth) ? height : minWidth)
+			.render();
+	}
 
-	/*  Turn this part on to avoid the jump */
+	var familyCharts = [['Phylum', phylumBarChart], ['Class', classBarChart], ['Order', orderBarChart],
+	 ['Family', familyBarChart], ['Genus', genusBarChart]];
 
-	barChart.on('pretransition', function(chart) {
-		chart.select('.axis.x')
-			// create stuff
-			.transition().duration(chart.transitionDuration())
-			// change stuff
-			.attr("text-anchor", "end")
-			.selectAll("text")
-			.attr("transform", "rotate(-90)")
-			.attr("dy", "-0.7em")
-			.attr("dx", "+5em");
-	});
+	for (const chartKeyPair of familyCharts){
 
-		// .xAxisLabel('Categories')
+		var barChart = chartKeyPair[1];
+
+		barChart
+			.height(140)
+			.margins({top: 10, right: 10, bottom: 30, left: 50})
+			.dimension(key_map[chartKeyPair[0]].Dim)
+			.group(key_map[chartKeyPair[0]].Group)
+			.colors(['#6baed6'])
+			.x(d3.scale.ordinal().domain(key_map[chartKeyPair[0]].Dim)) 
+			.xUnits(dc.units.ordinal)
+			.elasticY(true)
+			.yAxisLabel(Records_Label)
+			.xAxisLabel(chartKeyPair[0])
+			.yAxis().ticks(4);
+
+		/*  Turn this part on to avoid the jump */
+
+		barChart.on('pretransition', function(chart) {
+			chart.select('.axis.x')
+				// create stuff
+				.transition().duration(chart.transitionDuration())
+				// change stuff
+				.attr("text-anchor", "end")
+				.selectAll("text")
+				.attr("transform", "rotate(-90)")
+				.attr("dy", "-0.7em")
+				.attr("dx", "+5em");
+		});
+
+		updateChartWidth(barChart, timeWidth)
+	}
+	
+	// .xAxisLabel('Categories')
 
 	// barChart
 	// 	.xAxis().tickValues([]);
@@ -307,10 +330,11 @@ function makeGraphs(error, recordsJson) {
 	  });
 		
 	var stateDistWidth =  document.getElementById('state-stage').offsetWidth;
+	var stateChartHeight = 1030;
 
     stateChart
     	.width(stateDistWidth)
-		.height(980)
+		.height(stateChartHeight)
 		.margins({top: 10, right: 20, bottom: 40, left: 30})
         .dimension(stateDim)
         .group(stateGroup)
@@ -367,7 +391,7 @@ function makeGraphs(error, recordsJson) {
 		return array;
 	}
 	
-	updateChartHeight(districtChart, 980);	
+	updateChartHeight(districtChart, stateChartHeight);	
 		
 	temperatureChart
 		.width(width)
@@ -402,21 +426,18 @@ function makeGraphs(error, recordsJson) {
 		.height(192)
 		.dimension(key_map[dynamic_name_store["PieChart1"]].Dim)
         .group(key_map[dynamic_name_store["PieChart1"]].Group)
-		.label(function(d) {
-			// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-			return '';
-		});
+		.label(function(d) { return d.key +" (" + Math.floor(d.value / all.value() * 100) + "%)"; });
+
+	pieChart1.onClick = function() {}; // Disable Click on chart
 
 	pieChart2
 		.width(width)
 		.height(192)
 		.dimension(key_map[dynamic_name_store["PieChart2"]].Dim)
         .group(key_map[dynamic_name_store["PieChart2"]].Group)
-		.label(function(d) {
-			// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-			return '';
-		});
+		.label(function(d) { return d.key +" (" + Math.floor(d.value / all.value() * 100) + "%)"; });
 
+	pieChart2.onClick = function() {}; // Disable Click on chart
 	
 	var pie_dropdown_options = ['Phylum', 'Class', 'Order', 'Family', 'Genus'];
 
@@ -440,10 +461,8 @@ function makeGraphs(error, recordsJson) {
 				.height(192)
 				.dimension(key_map[$(this).text()].Dim)
 				.group(key_map[$(this).text()].Group)
-				.label(function(d) {
-					// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-					return '';
-				});  
+				.label(function(d) { return d.key +" (" + Math.floor(d.value / all.value() * 100) + "%)"; });  
+
 			pieChart1.filterAll();dc.redrawAll();  
 		});
 	});
@@ -470,43 +489,41 @@ function makeGraphs(error, recordsJson) {
 				.height(192)
 				.dimension(key_map[$(this).text()].Dim)
 				.group(key_map[$(this).text()].Group)
-				.label(function(d) {
-					// return d.data.key + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-					return '';
-				});  
+				.label(function(d) { return d.key +" (" + Math.floor(d.value / all.value() * 100) + "%)"; });  
+
 			pieChart2.filterAll();dc.redrawAll();   
 		});
 	});
 
-	$('#toggle-3').on('click', function(){
-		//Make sure its empty
-		$('#dropdown-menu-3').html(``);
-		for (const keyPair of pie_dropdown_options) {
-			if (keyPair != dynamic_name_store['PieChart1'] && keyPair != dynamic_name_store['PieChart2']) {
-				$('#dropdown-menu-3').html($('#dropdown-menu-3').html() + `<li><a>` + keyPair + `</a></li>`);	
-			}
-		}
+	// $('#toggle-3').on('click', function(){
+	// 	//Make sure its empty
+	// 	$('#dropdown-menu-3').html(``);
+	// 	for (const keyPair of pie_dropdown_options) {
+	// 		if (keyPair != dynamic_name_store['PieChart1'] && keyPair != dynamic_name_store['PieChart2']) {
+	// 			$('#dropdown-menu-3').html($('#dropdown-menu-3').html() + `<li><a>` + keyPair + `</a></li>`);	
+	// 		}
+	// 	}
 		
-		// Attach Click listeners to them.
-		$('#dropdown-menu-3 a').on('click', function(){    
-			$('#toggle-3').html($(this).html() + ' <span class="caret"></span>'); 
-			var label = $(this).text();  
-			dynamic_name_store['BarChart'] = $(this).text();
+	// 	// Attach Click listeners to them.
+	// 	$('#dropdown-menu-3 a').on('click', function(){    
+	// 		$('#toggle-3').html($(this).html() + ' <span class="caret"></span>'); 
+	// 		var label = $(this).text();  
+	// 		dynamic_name_store['BarChart'] = $(this).text();
 	
-			barChart.filter(null);
-			barChart
-				.dimension(key_map[label].Dim)
-				.group(key_map[label].Group)
-				.x(d3.scale.ordinal().domain(key_map[label].Dim))
-				.xUnits(dc.units.ordinal)
-				.elasticX(true)		
-				.yAxisLabel(Records_Label)
-				.xAxisLabel(dynamic_name_store["BarChart"]);
-			// barChart.focus(getKeys(key_map[label].Group));	//hack Not required 
-			barChart.filterAll(); dc.redrawAll();   
-			// barChart.render();
-		});
-	});
+	// 		barChart.filter(null);
+	// 		barChart
+	// 			.dimension(key_map[label].Dim)
+	// 			.group(key_map[label].Group)
+	// 			.x(d3.scale.ordinal().domain(key_map[label].Dim))
+	// 			.xUnits(dc.units.ordinal)
+	// 			.elasticX(true)		
+	// 			.yAxisLabel(Records_Label)
+	// 			.xAxisLabel(dynamic_name_store["BarChart"]);
+	// 		// barChart.focus(getKeys(key_map[label].Group));	//hack Not required 
+	// 		barChart.filterAll(); dc.redrawAll();   
+	// 		// barChart.render();
+	// 	});
+	// });
 
 	
 	/**
@@ -597,12 +614,12 @@ function makeGraphs(error, recordsJson) {
 
 				html2canvas($("#timeline-stage")[0], { scale: 2 }).then(function(canvas) {
 					y = y + 10;
-					if (y + 60 > 280) {
+					if (y + 30 > 280) {
 						y = 25;
 						doc.addPage();
 					} 
-					doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, y, 180, 60);
-					y += 65;
+					doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, y, 180, 30);
+					y += 35;
 					if (y > 280) {
 						y = 25;
 						doc.addPage();
@@ -666,11 +683,15 @@ function makeGraphs(error, recordsJson) {
 
 	//Update the map if any dc chart get filtered
 	dcCharts = [timeChartSmall, entomofaunaChart, otherInvertebrateChart, vertebrateChart, habitatChart,
-		stateChart, timeChart, barChart, districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
+		stateChart, timeChart, phylumBarChart, classBarChart, orderBarChart, familyBarChart, genusBarChart,
+		 districtChart, humidityChart, temperatureChart, pieChart1, pieChart2];
 
 	dcChartsName = [['Date Range' , timeChartSmall], ['States', stateChart],['Districts', districtChart],
-		['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], ['Other Invertebrate', otherInvertebrateChart], 
-		['Temperature', temperatureChart], ['Humidity', humidityChart], ['BarChart', barChart], ['PieChart1',pieChart1],['PieChart2',pieChart2]];
+		['Habitats',habitatChart], ['Vertebrate',vertebrateChart], ['Entomofauna' ,entomofaunaChart], 
+		['Other Invertebrate', otherInvertebrateChart], ['Temperature', temperatureChart], 
+		['Humidity', humidityChart], ['Phylum', phylumBarChart], ['Class', classBarChart], 
+		['Order', orderBarChart], ['Family', familyBarChart], ['Genus', genusBarChart], 
+		['PieChart1',pieChart1], ['PieChart2',pieChart2]];
 
 	var autocomplete_keys = [];
 	var group_key = "States";
@@ -681,11 +702,12 @@ function makeGraphs(error, recordsJson) {
 	$('#toggle-nav').on('click', function(){
 		//Make sure its empty
 		$('#dropdown-menu-nav').html(``);
-		var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+		var somearray = ['PieChart1', 'PieChart2'];
 		for (const chartKeyPair of dcChartsName) {
 			var chartName = chartKeyPair[0];
 			if (chartName != 'Date Range') {
 				if (somearray.includes(chartName)) {
+					return; // Skip piecharts
 					chartName = dynamic_name_store[chartName];
 				}
 				$('#dropdown-menu-nav').html($('#dropdown-menu-nav').html() + `<li><a>` + chartName + `</a></li>`);	
@@ -695,12 +717,13 @@ function makeGraphs(error, recordsJson) {
 		// Attach Click Listeners to Links.
 		$('#dropdown-menu-nav a').on('click', function(){    
 			$('#toggle-nav').html($(this).html() + ' <span class="caret"></span>'); 
-			var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+			var somearray = ['PieChart1', 'PieChart2'];
 			// Fill up array 
 			group_key = $(this).text();
 			for (const keyPair of dcChartsName) {
 				var chartName = keyPair[0];
 				if (somearray.includes(chartName)) {
+					return;	// Skip piecharts
 					chartName = dynamic_name_store[chartName];
 				}
 				if (chartName == group_key) {
@@ -724,7 +747,7 @@ function makeGraphs(error, recordsJson) {
 		let term = $('#search').data('uiAutocomplete').term;
 		//check if it is not null and matches the keys then filter 
 		if (term!=null && autocomplete_keys.includes(term)) {
-			var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+			var somearray = ['PieChart1', 'PieChart2'];
 			for (const keyPair of dcChartsName) {
 				var chartName = keyPair[0];
 				if (somearray.includes(chartName)) {
@@ -744,7 +767,7 @@ function makeGraphs(error, recordsJson) {
 			deferRequestBy: 100, // This is to avoid js error on fast typing
 			select: function (event, ui) {
 				var label = ui.item.label;
-				var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+				var somearray = ['PieChart1', 'PieChart2'];
 
 				for (const keyPair of dcChartsName) {
 					var chartName = keyPair[0];
@@ -1130,7 +1153,7 @@ function makeGraphs(error, recordsJson) {
 	// });
 	function getAllActiveFilters() {
 		var array = [];
-		var somearray = ['BarChart', 'PieChart1', 'PieChart2'];
+		var somearray = ['PieChart1', 'PieChart2'];
 		dcChartsName.forEach(dcChart => {
 			var filters = dcChart[1].filters();
 			var chartName = dcChart[0];
@@ -1146,6 +1169,7 @@ function makeGraphs(error, recordsJson) {
 				}
 			}
 			if (somearray.includes(chartName)) {
+				return;	// Skip this if we see pie-Charts
 				chartName = dynamic_name_store[chartName];
 			}
 			if(chartName == 'Districts'){
@@ -1181,7 +1205,7 @@ function makeGraphs(error, recordsJson) {
 					reset_geojson_state();
 					reset_geojson_district();
 				}
-				// updateChartHeight(districtChart, 980);
+				// updateChartHeight(districtChart, stateChartHeight);
 			}
 			else if (chart==districtChart) {
 				if (filter!=null){
@@ -1195,7 +1219,13 @@ function makeGraphs(error, recordsJson) {
 				}
 			}
 			// Got to update chart height at all instances
-			updateChartHeight(districtChart, 980);
+			updateChartHeight(districtChart, stateChartHeight);
+			// for (const chartKeyPair of familyCharts){
+			// 	var barChart = chartKeyPair[1];
+			// 	barChart.filterAll(); 
+			// 	updateChartWidth(barChart, timeWidth)
+			// }
+			// dc.redrawAll();
 
 			// Get active layers before deleting them
 			var active = layerControl.getOverlays();
