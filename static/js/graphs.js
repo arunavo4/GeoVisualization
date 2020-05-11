@@ -705,12 +705,11 @@ function makeGraphs(error, recordsJson) {
 		var somearray = ['PieChart1', 'PieChart2'];
 		for (const chartKeyPair of dcChartsName) {
 			var chartName = chartKeyPair[0];
-			if (chartName != 'Date Range') {
-				if (somearray.includes(chartName)) {
-					return; // Skip piecharts
-					chartName = dynamic_name_store[chartName];
+
+			if (!somearray.includes(chartName)){
+				if (chartName != 'Date Range') {				
+					$('#dropdown-menu-nav').html($('#dropdown-menu-nav').html() + `<li><a>` + chartName + `</a></li>`);	
 				}
-				$('#dropdown-menu-nav').html($('#dropdown-menu-nav').html() + `<li><a>` + chartName + `</a></li>`);	
 			}
 		}
 
@@ -722,14 +721,13 @@ function makeGraphs(error, recordsJson) {
 			group_key = $(this).text();
 			for (const keyPair of dcChartsName) {
 				var chartName = keyPair[0];
-				if (somearray.includes(chartName)) {
-					return;	// Skip piecharts
-					chartName = dynamic_name_store[chartName];
-				}
-				if (chartName == group_key) {
-					autocomplete_keys = getKeys(keyPair[1].group());
-					autocomplete_keys = autocomplete_keys.filter(function (e) {return e != null; }); 
-					break;
+				
+				if (!somearray.includes(chartName)) {
+					if (chartName == group_key) {
+						autocomplete_keys = getKeys(keyPair[1].group());
+						autocomplete_keys = autocomplete_keys.filter(function (e) {return e != null; }); 
+						break;
+					}
 				}
 			}
 			$( "#search" ).autocomplete('option', 'source', autocomplete_keys)
