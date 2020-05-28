@@ -1,3 +1,9 @@
+/** 
+ * 	Author: Arunavo Ray
+ * 	Date: 27/01/2020
+ * 	
+*/
+
 queue()
     .defer(d3.json, "/data")
     .await(makeGraphs);
@@ -721,7 +727,7 @@ function makeGraphs(error, recordsJson) {
 			group_key = $(this).text();
 			for (const keyPair of dcChartsName) {
 				var chartName = keyPair[0];
-				
+
 				if (!somearray.includes(chartName)) {
 					if (chartName == group_key) {
 						autocomplete_keys = getKeys(keyPair[1].group());
