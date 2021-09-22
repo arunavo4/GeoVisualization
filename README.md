@@ -3,7 +3,7 @@ Version 2.0 of Geo-Vis Data Visualization Tool for GeoFauna App.
 
 This Web-Tool is used to read the data from GeoFauna App and Provide Insight into it.
 
-Use the .exe file to run it diectly. [Link to download](https://drive.google.com/file/d/1FkKQo2uJ7TniJ2MK5NBIE2M1xGCMdA2h/view?usp=sharing)
+Use the .exe file in Release to run it diectly. [Link to download](https://github.com/arunavo4/GeoVisualization/releases/download/v1.0.1/GeoVis-5-EXE.rar)
 
 ## Map Area
 
