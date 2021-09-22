@@ -1,7 +1,7 @@
 # GeoVisualization
 Version 2.0 of Geo-Vis Data Visualization Tool for GeoFauna App.
 
-This Web-Tool is used to read the data from GeoFauna App and Provide Insight into it.
+This Web-Tool is used to read the data from GeoFauna App and Provide Insight into it. [Demo Video](https://youtu.be/PLp2uYX2rEk)
 
 ## Abstract
 - The overall purposes of this project are to systematically collect wildlife survey data in a standard format.
