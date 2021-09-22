@@ -3,6 +3,13 @@ Version 2.0 of Geo-Vis Data Visualization Tool for GeoFauna App.
 
 This Web-Tool is used to read the data from GeoFauna App and Provide Insight into it.
 
+## Abstract
+- The overall purposes of this project are to systematically collect wildlife survey data in a standard format.
+- Organize, manage, analyse and visualise the collected data.
+- It uses the geospatial information in the data to build informative visual analysis of the geotagged  data.
+- This data then can be used to make informed decisions based on factual data collected from the field survey
+
+
 Use the .exe file in Release to run it diectly. [Link to download](https://github.com/arunavo4/GeoVisualization/releases/download/v1.0.1/GeoVis-5-EXE.rar)
 
 ## Map Area
